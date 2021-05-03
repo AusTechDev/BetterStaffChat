@@ -1,7 +1,16 @@
 <h1 align="center">BetterStaffChat</h1>
 <p align="center">
-    <a href="https://github.com/AusTechDev/BetterStaffChat/actions/workflows/build.yml"><img src="https://img.shields.io/github/workflow/status/AusTechDev/BetterStaffChat/Build?style=flat-square"></a>
-    <a href="https://github.com/AusTechDev/BetterStaffChat/releases"><img src="https://img.shields.io/github/v/release/AusTechDev/BetterStaffChat?label=version&style=flat-square"></a>
+    <a href="https://github.com/AusTechDev/BetterStaffChat/actions/workflows/build.yml">
+      <img src="https://img.shields.io/github/workflow/status/AusTechDev/BetterStaffChat/Build?style=flat-square">
+    </a>
+    
+    <a href="https://github.com/AusTechDev/BetterStaffChat/releases">
+      <img src="https://img.shields.io/github/v/release/AusTechDev/BetterStaffChat?label=version&style=flat-square">
+    </a>
+
+    <a href="https://www.codefactor.io/repository/github/austechdev/betterstaffchat">
+      <img src="https://img.shields.io/codefactor/grade/github/AusTechDev/BetterStaffChat&style=flat-square"></a> 
+    </a>
     <br>
     <a href="https://discord.gg/yTzzyXwHM3"><img src="https://img.shields.io/discord/749536377020088361?color=7289DA&logo=discord&logoColor=white&style=flat-square"></a>
 </p>
