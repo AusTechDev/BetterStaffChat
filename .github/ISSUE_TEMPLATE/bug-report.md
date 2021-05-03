@@ -7,8 +7,7 @@ assignees: ''
 
 ---
 
-If you are fully sure that what you are reporting is a bug, and can be re-produced, check the tickmark below.
-[ ] I agree that the bug I am providing can be reproduced 
+If you are fully sure that what you are reporting is a bug, and can be re-produced, please continue.
 
 **Version**
 Please provide the version of BetterStaffChat you are using by providing it below. (`/version BetterStaffChat`)
