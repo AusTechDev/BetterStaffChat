@@ -113,10 +113,6 @@ public final class LibraryLoader {
 
             LogUtil.logPrefixDebug(plugin, "&aSuccessfully downloaded '" + name + "'");
         }
-        
-        public static void loadRelocate(String groupId, String artifactId, String version, String repoUrl, Object plugin) {
-            load(new Dependency(groupId, artifactId, version, repoUrl), plugin, true);
-        }
 
         if (!relocate && !saveLocation.exists() && !saveLocation.exists()) {
             throw new RuntimeException("Unable to download dependency: " + d.toString());
@@ -132,6 +128,10 @@ public final class LibraryLoader {
         }
 
         LogUtil.logPrefixDebug(plugin, "&aLoaded dependency '" + name + "' successfully.");
+    }
+    
+    public static void loadRelocate(String groupId, String artifactId, String version, String repoUrl, Object plugin) {
+            load(new Dependency(groupId, artifactId, version, repoUrl), plugin, true);
     }
 
     private static File getLibFolder(Object plugin) {
