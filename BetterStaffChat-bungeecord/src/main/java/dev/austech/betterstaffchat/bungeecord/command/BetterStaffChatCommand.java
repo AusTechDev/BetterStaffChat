@@ -32,7 +32,7 @@ public class BetterStaffChatCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.hasPermission("betterstaffchat.reload")) {
             boolean reload = BetterStaffChatBungeeCord.getInstance().reloadConfig(sender);
             if (!reload && BetterStaffChatBungeeCord.getInstance().getConfig().getBoolean("discord.bot.enabled")) {
                 ((JDAImplementation) BetterStaffChatBungeeCord.getInstance().getJda()).asJda().getPresence().setActivity(Activity.of(

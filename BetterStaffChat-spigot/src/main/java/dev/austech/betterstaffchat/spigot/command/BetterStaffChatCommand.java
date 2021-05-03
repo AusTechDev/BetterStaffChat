@@ -33,7 +33,7 @@ public class BetterStaffChatCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.hasPermission("betterstaffchat.reload")) {
             boolean reload = BetterStaffChatSpigot.getInstance().reloadConfig(sender);
             if (!reload && BetterStaffChatSpigot.getInstance().getConfig().getBoolean("discord.bot.enabled")) {
                 ((JDAImplementation) BetterStaffChatSpigot.getInstance().getJda()).asJda().getPresence().setActivity(Activity.of(
