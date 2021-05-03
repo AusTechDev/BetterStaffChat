@@ -75,10 +75,6 @@ public final class LibraryLoader {
         load(new Dependency(groupId, artifactId, version, repoUrl), plugin, false);
     }
 
-    public static void loadRelocate(String groupId, String artifactId, String version, String repoUrl, Object plugin) {
-        load(new Dependency(groupId, artifactId, version, repoUrl), plugin, true);
-    }
-
     public static void load(Dependency d, Object plugin, boolean relocate) {
         LogUtil.logPrefixDebug(plugin, String.format("&7Loading dependency %s:%s:%s", d.getGroupId(), d.getArtifactId(), d.getVersion(), d.getRepoUrl()));
         String name = d.getArtifactId() + "-" + d.getVersion();
@@ -116,6 +112,10 @@ public final class LibraryLoader {
             }
 
             LogUtil.logPrefixDebug(plugin, "&aSuccessfully downloaded '" + name + "'");
+        }
+        
+        public static void loadRelocate(String groupId, String artifactId, String version, String repoUrl, Object plugin) {
+            load(new Dependency(groupId, artifactId, version, repoUrl), plugin, true);
         }
 
         if (!relocate && !saveLocation.exists() && !saveLocation.exists()) {
