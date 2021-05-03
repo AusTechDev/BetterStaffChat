@@ -1,0 +1,4 @@
+name: BetterStaffChat
+version: ${project.version}
+main: dev.austech.betterstaffchat.bungeecord.BetterStaffChatBungeeCord
+author: AusTechDev

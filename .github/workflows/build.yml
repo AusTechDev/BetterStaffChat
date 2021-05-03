@@ -1,0 +1,30 @@
+name: Build
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK/Maven
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Cache Maven Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        run: mvn clean install
+      - id: get-id
+        uses: actions/github-script@0.9.0
+        with:
+          script: return (context.payload.after.substring(0,7))
+          result-encoding: string
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts-${{ steps.get-id.outputs.result }}
+          path: |
+            target/*.jar
