@@ -6,6 +6,7 @@
     <a href="https://github.com/AusTechDev/BetterStaffChat/releases">
       <img src="https://img.shields.io/github/v/release/AusTechDev/BetterStaffChat?label=version&style=flat-square">
     </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2FAusTechDev%2FBetterStaffChat?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FAusTechDev%2FBetterStaffChat.svg?type=shield"/></a>
     <a href="https://www.codefactor.io/repository/github/austechdev/betterstaffchat">
       <img src="https://img.shields.io/codefactor/grade/github/AusTechDev/BetterStaffChat?style=flat-square"></a> 
     </a>
@@ -31,3 +32,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 ## License
 See [LICENSE.txt](LICENSE.txt) for more information. <br>
 The header for each file is located at [HEADER.txt](HEADER.txt)
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAusTechDev%2FBetterStaffChat.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FAusTechDev%2FBetterStaffChat?ref=badge_large)
