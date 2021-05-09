@@ -19,6 +19,7 @@
 package dev.austech.betterstaffchat.bungeecord.util;
 
 import dev.austech.betterstaffchat.bungeecord.BetterStaffChatBungeeCord;
+import dev.austech.betterstaffchat.common.util.UpdateChecker;
 import lombok.experimental.UtilityClass;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -48,7 +49,7 @@ public class Config {
         }
         try {
             Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(BetterStaffChatBungeeCord.getInstance().getPluginDataFolder(), "config.yml"));
-            if (config.getInt("config-version") != BetterStaffChatBungeeCord.getInstance().getLatestConfigVersion())
+            if (config.getInt("config-version") != UpdateChecker.getCurrentConfigVersion())
                 newVersion(config.getInt("config-version"));
             else
                 BetterStaffChatBungeeCord.getInstance().setConfig(config);

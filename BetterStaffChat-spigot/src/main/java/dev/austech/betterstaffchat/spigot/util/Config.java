@@ -19,6 +19,7 @@
 package dev.austech.betterstaffchat.spigot.util;
 
 import com.google.common.collect.Lists;
+import dev.austech.betterstaffchat.common.util.UpdateChecker;
 import dev.austech.betterstaffchat.spigot.BetterStaffChatSpigot;
 import jdk.nashorn.internal.runtime.ParserException;
 import lombok.experimental.UtilityClass;
@@ -54,7 +55,7 @@ public class Config {
         try {
             config.load(file);
 
-            if (config.getInt("config-version") != BetterStaffChatSpigot.getInstance().getLatestConfigVersion())
+            if (config.getInt("config-version") != UpdateChecker.getCurrentConfigVersion())
                 newVersion(config.getInt("config-version"));
             else
                 BetterStaffChatSpigot.getInstance().setConfig(config);

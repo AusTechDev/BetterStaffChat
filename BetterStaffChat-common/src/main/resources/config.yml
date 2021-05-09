@@ -143,8 +143,11 @@ discord:
     # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
     staffchat-switch: "%player_name% **switched** from **%from%** to **%to%**"
 
+# Disable this to stop the plugin checking for updates on startup
+check-for-updates: true
+
 # Don't touch unless you know what you are doing
 debug: false
 
 # no touchy me please [DO NOT TOUCH AS IT CAN BREAK YOUR CONFIG]
-config-version: 2
+config-version: 3
