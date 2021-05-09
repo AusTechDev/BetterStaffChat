@@ -31,6 +31,7 @@ import dev.austech.betterstaffchat.bungeecord.util.StaffChatUtil;
 import dev.austech.betterstaffchat.common.DependencyLoader;
 import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.TextUtil;
+import dev.austech.betterstaffchat.common.util.UpdateChecker;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.CommandSender;
@@ -43,6 +44,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public final class BetterStaffChatBungeeCord extends Plugin {
     @Getter private static BetterStaffChatBungeeCord instance;
@@ -51,13 +53,22 @@ public final class BetterStaffChatBungeeCord extends Plugin {
     @Getter private final ArrayList<UUID> toggledStaffChat = Lists.newArrayList();
     @Getter private JDAImplementation jda;
     @Getter boolean discordEnabled;
-    @Getter private final int latestConfigVersion = 2;
 
     @Override
     public void onEnable() {
         instance = this;
 
         Config.load();
+
+        if (getConfig().getBoolean("check-for-updates"))
+            getProxy().getScheduler().runAsync(this, () -> {
+                if (UpdateChecker.needsUpdate(this, getDescription().getVersion())) {
+                    getProxy().getScheduler().schedule(this, () -> {
+                        logPrefix("&eA new update for BetterStaffChat is available...");
+                        logPrefix("&ehttps://www.spigotmc.org/resources/91991");
+                    }, 3, TimeUnit.SECONDS);
+                }
+            });
 
         new Metrics(this, 10954);
 

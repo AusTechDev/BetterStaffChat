@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import dev.austech.betterstaffchat.common.DependencyLoader;
 import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.TextUtil;
+import dev.austech.betterstaffchat.common.util.UpdateChecker;
 import dev.austech.betterstaffchat.spigot.command.BetterStaffChatCommand;
 import dev.austech.betterstaffchat.spigot.command.MuteStaffChatCommand;
 import dev.austech.betterstaffchat.spigot.command.StaffChatCommand;
@@ -46,6 +47,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public final class BetterStaffChatSpigot extends JavaPlugin {
 
@@ -55,16 +57,23 @@ public final class BetterStaffChatSpigot extends JavaPlugin {
     @Getter private JDAImplementation jda;
     @Getter boolean discordEnabled;
     @Getter @Setter private FileConfiguration config;
-    @Getter private final int latestConfigVersion = 2;
-
 
     @Override
     public void onEnable() {
         instance = this;
 
+        Config.load();
+
+        if (getConfig().getBoolean("check-for-updates"))
+            Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> {
+                if (UpdateChecker.needsUpdate(this, getDescription().getVersion())) {
+                    logPrefix("&eA new update for BetterStaffChat is available...");
+                    logPrefix("&ehttps://www.spigotmc.org/resources/91991");
+                }
+            }, 20 * 3);
+
         new Metrics(this, 10952);
 
-        Config.load();
 
         if (getConfig().getBoolean("discord.bot.enabled") && getConfig().getBoolean("discord.webhook.enabled")) {
             new ConfigurationException("Both Discord types are enabled").printStackTrace();
