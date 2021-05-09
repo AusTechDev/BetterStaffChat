@@ -24,6 +24,8 @@ import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 
+import java.util.logging.Logger;
+
 public class JDAImplementation {
     private final JDA jda;
     @Getter(AccessLevel.PROTECTED) private final AbstractStaffChatUtil staffChatUtil;
@@ -48,6 +50,11 @@ public class JDAImplementation {
             embedBuilder.setFooter(embed.getFooter().getText(), embed.getFooter().getIconUrl());
         }
         jda.getGuildById(guild).getTextChannelById(channel).sendMessage(embedBuilder.build()).queue();
+    }
+
+    public void shutdown() {
+        Logger.getLogger(JDA.class.getName()).info("Shutting down");
+        this.jda.shutdown();
     }
 
     public JDA asJda() {

@@ -36,12 +36,16 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
     @Getter
     private static final StaffChatUtil instance = new StaffChatUtil();
 
+    public static String getFormattedServerName(String serverName) {
+        return Config.getOptional("staffchat.server-replacement." + serverName).orElse(serverName);
+    }
+
     public String getFormattedMessage(Object sender, String message) {
         StringBuilder builder = new StringBuilder();
         message = BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.format")
                         .replace("%player_name%", (sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getName() : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-replacement"))
                         .replace("%message%", BetterStaffChatBungeeCord.getInstance().getConfig().getBoolean("staffchat.strip-color-codes") ? ChatColor.stripColor(TextUtil.colorize(message)) : message)
-                        .replace("%server%",  (sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getServer().getInfo().getName() : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-server-replacement"));
+                        .replace("%server%",  (sender instanceof ProxiedPlayer) ? getFormattedServerName(((ProxiedPlayer) sender).getServer().getInfo().getName()) : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-server-replacement"));
 
         if (BetterStaffChatBungeeCord.getInstance().getProxy().getPluginManager().getPlugin("LuckPerms") != null && sender instanceof ProxiedPlayer) {
             message = message.replace("%luckperms_prefix%", LuckPermsUtil.getPrefix((ProxiedPlayer) sender)).replace("%luckperms_suffix%", LuckPermsUtil.getSuffix((ProxiedPlayer) sender));
@@ -147,11 +151,11 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
         String footer = BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.embed.embed-footer")
                 .replace("%player_name%", (sender instanceof ProxiedPlayer) ? TextUtil.cleanForDiscord(((ProxiedPlayer) sender).getName()) : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-replacement"))
                 .replace("%uuid%", (sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getUniqueId().toString() : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-uuid-replacement"))
-                .replace("%server%",  (sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getServer().getInfo().getName() : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-server-replacement"));
+                .replace("%server%",  (sender instanceof ProxiedPlayer) ? getFormattedServerName(((ProxiedPlayer) sender).getServer().getInfo().getName()) : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-server-replacement"));
 
         String icon = BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.embed.embed-footer-icon").replace("%player_name%", (sender instanceof ProxiedPlayer) ? TextUtil.cleanForDiscord(((ProxiedPlayer) sender).getName()) : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-replacement"))
                 .replace("%uuid%", (sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getUniqueId().toString() : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-uuid-replacement"))
-                .replace("%server%",  (sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getServer().getInfo().getName() : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-server-replacement"));
+                .replace("%server%",  (sender instanceof ProxiedPlayer) ? getFormattedServerName(((ProxiedPlayer) sender).getServer().getInfo().getName()) : BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.console-server-replacement"));
 
         if (!BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.embed.embed-footer").equals("")) {
             embed.setFooter(footer, icon);

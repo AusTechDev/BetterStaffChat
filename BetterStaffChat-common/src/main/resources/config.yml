@@ -34,6 +34,10 @@ staffchat:
   # If a staff member puts color codes in their message, it will remove them if the below is true.
   strip-color-codes: false
 
+  # Changes the display name of servers on Bungeecord. Color codes supported
+  server-replacement: # Format - servername: "Displayname"
+    hub: "Hub" # Make sure that the first value is the one equal to in the bungeecord config.yml
+
   # The message that shows when someone has "betterstaffchat.messages.join" joins the network
   # PlaceholderAPI is supported only on Spigot
   # Placeholders for both spigot and bungeecord:
@@ -143,4 +147,4 @@ discord:
 debug: false
 
 # no touchy me please [DO NOT TOUCH AS IT CAN BREAK YOUR CONFIG]
-config-version: 1
+config-version: 2

@@ -55,7 +55,7 @@ public class PlayerListener implements Listener {
             StaffChatUtil.getInstance().discord(player, ChatColor.stripColor(TextUtil.colorize(BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.staffchat-format")
                     .replace("%player_name%", player.getName())
                     .replace("%message%", event.getMessage().substring(prefix.length()))
-                    .replace("%server%", player.getServer().getInfo().getName()))));
+                    .replace("%server%", StaffChatUtil.getFormattedServerName(player.getServer().getInfo().getName())))));
         } else if (player.hasPermission("betterstaffchat.messages.send") && BetterStaffChatBungeeCord.getInstance().getToggledStaffChat().contains(player.getUniqueId())) {
             event.setCancelled(true);
 
@@ -63,7 +63,7 @@ public class PlayerListener implements Listener {
             StaffChatUtil.getInstance().discord(player, ChatColor.stripColor(TextUtil.colorize(BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.staffchat-format")
                     .replace("%player_name%", player.getName())
                     .replace("%message%", event.getMessage()))
-                    .replace("%server%", player.getServer().getInfo().getName())));
+                    .replace("%server%", StaffChatUtil.getFormattedServerName(player.getServer().getInfo().getName()))));
         }
     }
 
@@ -74,7 +74,7 @@ public class PlayerListener implements Listener {
                 String message = TextUtil.colorize(
                         BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.join")
                                 .replace("%player_name%", event.getPlayer().getName())
-                                .replace("%server%", event.getPlayer().getServer().getInfo().getName())
+                                .replace("%server%", StaffChatUtil.getFormattedServerName(event.getPlayer().getServer().getInfo().getName()))
                 );
 
                 if (BetterStaffChatBungeeCord.getInstance().getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
@@ -86,7 +86,7 @@ public class PlayerListener implements Listener {
                 StaffChatUtil.getInstance().broadcast(message, "betterstaffchat.messages.read");
                 StaffChatUtil.getInstance().discord(event.getPlayer(), ChatColor.stripColor(TextUtil.colorize(BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.staffchat-join")
                         .replace("%player_name%", event.getPlayer().getName())
-                        .replace("%server%", event.getPlayer().getServer().getInfo().getName()))));
+                        .replace("%server%", StaffChatUtil.getFormattedServerName(event.getPlayer().getServer().getInfo().getName())))));
             }, 1, TimeUnit.SECONDS);
         }
     }
@@ -94,22 +94,24 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerDisconnect(PlayerDisconnectEvent event) {
         if (event.getPlayer().hasPermission("betterstaffchat.messages.leave") && !BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.leave").equals("")) {
-            String message = TextUtil.colorize(
-                    BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.leave")
-                            .replace("%player_name%", event.getPlayer().getName())
-                            .replace("%server%", event.getPlayer().getServer().getInfo().getName())
-            );
+            BetterStaffChatBungeeCord.getInstance().getProxy().getScheduler().schedule(BetterStaffChatBungeeCord.getInstance(), () -> {
+                String message = TextUtil.colorize(
+                        BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.leave")
+                                .replace("%player_name%", event.getPlayer().getName())
+                                .replace("%server%", StaffChatUtil.getFormattedServerName(event.getPlayer().getServer().getInfo().getName()))
+                );
 
-            if (BetterStaffChatBungeeCord.getInstance().getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
-                message = message.replace("%luckperms_prefix%", LuckPermsUtil.getPrefix(event.getPlayer())).replace("%luckperms_suffix%", LuckPermsUtil.getSuffix(event.getPlayer()));
-            }
+                if (BetterStaffChatBungeeCord.getInstance().getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
+                    message = message.replace("%luckperms_prefix%", LuckPermsUtil.getPrefix(event.getPlayer())).replace("%luckperms_suffix%", LuckPermsUtil.getSuffix(event.getPlayer()));
+                }
 
-            message = TextUtil.colorize(message);
+                message = TextUtil.colorize(message);
 
-            StaffChatUtil.getInstance().broadcast(message, "betterstaffchat.messages.read");
-            StaffChatUtil.getInstance().discord(event.getPlayer(), ChatColor.stripColor(TextUtil.colorize(BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.staffchat-leave")
-                    .replace("%player_name%", event.getPlayer().getName())
-                    .replace("%server%", event.getPlayer().getServer().getInfo().getName()))));
+                StaffChatUtil.getInstance().broadcast(message, "betterstaffchat.messages.read");
+                StaffChatUtil.getInstance().discord(event.getPlayer(), ChatColor.stripColor(TextUtil.colorize(BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.staffchat-leave")
+                        .replace("%player_name%", event.getPlayer().getName())
+                        .replace("%server%", StaffChatUtil.getFormattedServerName(event.getPlayer().getServer().getInfo().getName())))));
+            }, 1, TimeUnit.SECONDS);
         }
     }
 
@@ -121,8 +123,8 @@ public class PlayerListener implements Listener {
             String message = TextUtil.colorize(
                     BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.switch")
                             .replace("%player_name%", event.getPlayer().getName())
-                            .replace("%from%", event.getFrom().getName())
-                            .replace("%to%", event.getPlayer().getServer().getInfo().getName())
+                            .replace("%from%", StaffChatUtil.getFormattedServerName(event.getFrom().getName()))
+                            .replace("%to%", StaffChatUtil.getFormattedServerName(event.getPlayer().getServer().getInfo().getName()))
             );
 
             if (BetterStaffChatBungeeCord.getInstance().getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
@@ -134,8 +136,8 @@ public class PlayerListener implements Listener {
             StaffChatUtil.getInstance().broadcast(message, "betterstaffchat.messages.read");
             StaffChatUtil.getInstance().discord(event.getPlayer(), ChatColor.stripColor(TextUtil.colorize(BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.staffchat-switch")
                     .replace("%player_name%", event.getPlayer().getName()))
-                    .replace("%from%", event.getFrom().getName())
-                    .replace("%to%", event.getPlayer().getServer().getInfo().getName())));
+                    .replace("%from%", StaffChatUtil.getFormattedServerName(event.getFrom().getName()))
+                    .replace("%to%", StaffChatUtil.getFormattedServerName(event.getPlayer().getServer().getInfo().getName()))));
         }
     }
 }

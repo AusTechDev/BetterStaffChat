@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Optional;
 
 @UtilityClass
 public class Config {
@@ -70,6 +71,11 @@ public class Config {
                 ex1.printStackTrace();
             }
         }
+    }
+
+    public Optional<String> getOptional(String path) {
+        String find = BetterStaffChatBungeeCord.getInstance().getConfig().getString(path);
+        return Optional.ofNullable(find.isEmpty() ? null : find);
     }
 
     public void newVersion(int ver) throws IOException {

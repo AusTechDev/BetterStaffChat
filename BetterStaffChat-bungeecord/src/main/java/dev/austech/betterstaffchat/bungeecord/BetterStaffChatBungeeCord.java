@@ -49,9 +49,9 @@ public final class BetterStaffChatBungeeCord extends Plugin {
     @Getter @Setter private Configuration config;
     @Getter private final ArrayList<UUID> ignoreStaffChat = Lists.newArrayList();
     @Getter private final ArrayList<UUID> toggledStaffChat = Lists.newArrayList();
-    @Getter private Object jda;
+    @Getter private JDAImplementation jda;
     @Getter boolean discordEnabled;
-    @Getter private final int latestConfigVersion = 1;
+    @Getter private final int latestConfigVersion = 2;
 
     @Override
     public void onEnable() {
@@ -120,5 +120,10 @@ public final class BetterStaffChatBungeeCord extends Plugin {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onDisable() {
+        if (isDiscordEnabled()) (getJda()).shutdown();
     }
 }

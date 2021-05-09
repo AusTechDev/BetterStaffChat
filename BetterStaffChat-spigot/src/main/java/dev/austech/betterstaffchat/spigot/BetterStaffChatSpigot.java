@@ -52,10 +52,10 @@ public final class BetterStaffChatSpigot extends JavaPlugin {
     @Getter private static BetterStaffChatSpigot instance;
     @Getter private final ArrayList<UUID> ignoreStaffChat = Lists.newArrayList();
     @Getter private final ArrayList<UUID> toggledStaffChat = Lists.newArrayList();
-    @Getter private Object jda;
+    @Getter private JDAImplementation jda;
     @Getter boolean discordEnabled;
     @Getter @Setter private FileConfiguration config;
-    @Getter private final int latestConfigVersion = 1;
+    @Getter private final int latestConfigVersion = 2;
 
 
     @Override
@@ -123,5 +123,10 @@ public final class BetterStaffChatSpigot extends JavaPlugin {
 
     public void logPrefixDebug(String string) {
         if (getConfig().getBoolean("debug")) Bukkit.getConsoleSender().sendMessage("[BetterStaffChat] Debug - " + TextUtil.colorize(string));
+    }
+
+    @Override
+    public void onDisable() {
+        if (isDiscordEnabled()) (getJda()).shutdown();
     }
 }
