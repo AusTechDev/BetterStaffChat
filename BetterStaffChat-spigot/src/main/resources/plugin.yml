@@ -1,5 +1,4 @@
 name: BetterStaffChat
 version: ${project.version}
 main: dev.austech.betterstaffchat.spigot.BetterStaffChatSpigot
-api-version: 1.16
 author: AusTechDev
