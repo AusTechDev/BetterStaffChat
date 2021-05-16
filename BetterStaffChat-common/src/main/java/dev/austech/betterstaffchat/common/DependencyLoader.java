@@ -39,6 +39,7 @@ public class DependencyLoader {
                 LibraryLoader.load("com.fasterxml.jackson.core", "jackson-annotations", "2.10.1", plugin);
                 LibraryLoader.load("com.fasterxml.jackson.core", "jackson-annotations", "2.10.1", plugin);
                 LibraryLoader.load("org.slf4j", "slf4j-api", "1.7.25", plugin);
+                LibraryLoader.load("net.sf.trove4j", "trove4j", "3.0.3", plugin);
                 LibraryLoader.load("com.neovisionaries", "nv-websocket-client", "2.14", plugin);
                 LibraryLoader.loadRelocate("net.dv8tion", "JDA", "4.2.1_262", "https://m2.dv8tion.net/releases/", plugin);
             }
