@@ -58,6 +58,7 @@ public final class BetterStaffChatBungeeCord extends Plugin {
     public void onEnable() {
         instance = this;
 
+        TextUtil.init(false, this);
         Config.load();
 
         if (getConfig().getBoolean("check-for-updates"))

@@ -36,7 +36,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -47,7 +46,6 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public final class BetterStaffChatSpigot extends JavaPlugin {
 
@@ -62,6 +60,7 @@ public final class BetterStaffChatSpigot extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        TextUtil.init(true, this);
         Config.load();
 
         if (getConfig().getBoolean("check-for-updates"))
@@ -132,6 +131,10 @@ public final class BetterStaffChatSpigot extends JavaPlugin {
 
     public void logPrefixDebug(String string) {
         if (getConfig().getBoolean("debug")) Bukkit.getConsoleSender().sendMessage("[BetterStaffChat] Debug - " + TextUtil.colorize(string));
+    }
+
+    public String getVersion() {
+        return Bukkit.getVersion();
     }
 
     @Override
