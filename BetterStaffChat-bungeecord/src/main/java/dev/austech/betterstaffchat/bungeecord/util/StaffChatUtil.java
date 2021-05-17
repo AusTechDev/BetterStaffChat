@@ -54,7 +54,7 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
         }
 
         for (String word : message.split(" ")) {
-            builder.append(TextUtil.colorize('&', word));
+            builder.append(TextUtil.colorize(word));
             builder.append(" ");
         }
 
