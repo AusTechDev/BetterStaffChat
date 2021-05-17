@@ -71,14 +71,17 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
     }
 
     public void discord(Object sender, String string) {
+        string = ChatColor.stripColor(TextUtil.colorize(string));
+        String finalString = string;
         Bukkit.getScheduler().runTaskAsynchronously(BetterStaffChatSpigot.getInstance(), () -> {
+
             if (BetterStaffChatSpigot.getInstance().getConfig().getBoolean("discord.webhook.enabled")) {
                 DiscordWebhook webhook = new DiscordWebhook(BetterStaffChatSpigot.getInstance().getConfig().getString("discord.webhook.url"));
 
                 if (BetterStaffChatSpigot.getInstance().getConfig().getBoolean("discord.discord-messages.embed.enabled")) {
-                    webhook.addEmbed(generateEmbed(sender, string));
+                    webhook.addEmbed(generateEmbed(sender, finalString));
                 } else {
-                    webhook.setContent(string);
+                    webhook.setContent(finalString);
                 }
 
                 try {
@@ -92,12 +95,12 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
                 if (BetterStaffChatSpigot.getInstance().getConfig().getBoolean("discord.discord-messages.embed.enabled")) {
                     for (String guildChannelPair : BetterStaffChatSpigot.getInstance().getConfig().getStringList("discord.bot.channels")) {
                         String[] parts = guildChannelPair.split(": ");
-                        ((JDAImplementation) BetterStaffChatSpigot.getInstance().getJda()).sendEmbed(parts[0], parts[1], generateEmbed(sender, string));
+                        ((JDAImplementation) BetterStaffChatSpigot.getInstance().getJda()).sendEmbed(parts[0], parts[1], generateEmbed(sender, finalString));
                     }
                 } else {
                     for (String guildChannelPair : BetterStaffChatSpigot.getInstance().getConfig().getStringList("discord.bot.channels")) {
                         String[] parts = guildChannelPair.split(": ");
-                        ((JDAImplementation) BetterStaffChatSpigot.getInstance().getJda()).sendMessage(parts[0], parts[1], string);
+                        ((JDAImplementation) BetterStaffChatSpigot.getInstance().getJda()).sendMessage(parts[0], parts[1], finalString);
                     }
                 }
             }

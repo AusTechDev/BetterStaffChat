@@ -80,6 +80,8 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
             string = string.replace("%luckperms_prefix%", "").replace("%luckperms_suffix%", "");
         }
 
+        string = ChatColor.stripColor(TextUtil.colorize(string));
+
         String finalString = string;
         BetterStaffChatBungeeCord.getInstance().getProxy().getScheduler().runAsync(BetterStaffChatBungeeCord.getInstance(), () -> {
             if (BetterStaffChatBungeeCord.getInstance().getConfig().getBoolean("discord.webhook.enabled")) {
