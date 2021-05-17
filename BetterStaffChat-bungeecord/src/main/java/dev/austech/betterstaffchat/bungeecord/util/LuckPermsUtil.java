@@ -18,6 +18,7 @@
 
 package dev.austech.betterstaffchat.bungeecord.util;
 
+import dev.austech.betterstaffchat.common.util.TextUtil;
 import lombok.Setter;
 import lombok.experimental.UtilityClass;
 import net.luckperms.api.LuckPerms;
@@ -32,12 +33,12 @@ public class LuckPermsUtil {
     public String getPrefix(ProxiedPlayer player) {
         User lpUser = luckPerms.getUserManager().getUser(player.getUniqueId());
         if(lpUser.getCachedData().getMetaData().getPrefix() == null) return "";
-        return lpUser.getCachedData().getMetaData().getPrefix();
+        return TextUtil.colorize(lpUser.getCachedData().getMetaData().getPrefix());
     }
 
     public String getSuffix(ProxiedPlayer player) {
         User lpUser = luckPerms.getUserManager().getUser(player.getUniqueId());
         if(lpUser.getCachedData().getMetaData().getSuffix() == null) return "";
-        return lpUser.getCachedData().getMetaData().getSuffix();
+        return TextUtil.colorize(lpUser.getCachedData().getMetaData().getSuffix());
     }
 }

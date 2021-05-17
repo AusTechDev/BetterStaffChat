@@ -58,13 +58,13 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
             builder.append(" ");
         }
 
-        return builder.substring( 0, builder.length() - 1 );
+        return builder.substring(0, builder.length() - 1);
     }
 
     public void broadcast(String string, String permission) {
         for (ProxiedPlayer player : BetterStaffChatBungeeCord.getInstance().getProxy().getPlayers()) {
             if (!BetterStaffChatBungeeCord.getInstance().getIgnoreStaffChat().contains(player.getUniqueId()) && player.hasPermission(permission)) {
-                player.sendMessage(TextComponent.fromLegacyText(string));
+                player.sendMessage(string);
             }
         }
 
@@ -75,12 +75,10 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
 
     public void discord(Object sender, String string) {
         if (BetterStaffChatBungeeCord.getInstance().getProxy().getPluginManager().getPlugin("LuckPerms") != null && sender instanceof ProxiedPlayer) {
-            string = string.replace("%luckperms_prefix%", LuckPermsUtil.getPrefix((ProxiedPlayer) sender)).replace("%luckperms_suffix%", LuckPermsUtil.getSuffix((ProxiedPlayer) sender));
+            string = string.replace("%luckperms_prefix%", ChatColor.stripColor(TextUtil.colorize(LuckPermsUtil.getPrefix((ProxiedPlayer) sender)))).replace("%luckperms_suffix%", ChatColor.stripColor(TextUtil.colorize(LuckPermsUtil.getSuffix((ProxiedPlayer) sender))));
         } else if (BetterStaffChatBungeeCord.getInstance().getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
             string = string.replace("%luckperms_prefix%", "").replace("%luckperms_suffix%", "");
         }
-
-        string = ChatColor.stripColor(TextUtil.colorize(string));
 
         String finalString = string;
         BetterStaffChatBungeeCord.getInstance().getProxy().getScheduler().runAsync(BetterStaffChatBungeeCord.getInstance(), () -> {

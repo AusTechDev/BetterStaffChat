@@ -70,8 +70,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerPostLogin(PostLoginEvent event) {
         if (event.getPlayer().hasPermission("betterstaffchat.messages.join") && !BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.join").equals("")) {
-            if (event.getPlayer().getServer() == null) return;
             BetterStaffChatBungeeCord.getInstance().getProxy().getScheduler().schedule(BetterStaffChatBungeeCord.getInstance(), () -> {
+                if (event.getPlayer().getServer() == null) return;
                 String message = TextUtil.colorize(
                         BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.join")
                                 .replace("%player_name%", event.getPlayer().getName())
@@ -95,8 +95,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerDisconnect(PlayerDisconnectEvent event) {
         if (event.getPlayer().hasPermission("betterstaffchat.messages.leave") && !BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.leave").equals("")) {
-            if (event.getPlayer().getServer() == null) return;
             BetterStaffChatBungeeCord.getInstance().getProxy().getScheduler().schedule(BetterStaffChatBungeeCord.getInstance(), () -> {
+                if (event.getPlayer().getServer() == null) return;
                 String message = TextUtil.colorize(
                         BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.leave")
                                 .replace("%player_name%", event.getPlayer().getName())

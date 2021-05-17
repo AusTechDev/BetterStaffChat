@@ -1,3 +1,0 @@
-files:
-  - source: /BetterStaffChat-common/src/main/resources/config.yml
-    translation: /BetterStaffChat-common/src/main/resources/config-%two_letters_code%.yml
