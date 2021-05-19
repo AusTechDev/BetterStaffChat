@@ -1,0 +1,108 @@
+/*
+ * BetterStaffChat - build.gradle
+ * Copyright (C) 2021 AusTech Development Team
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+plugins {
+    id 'java'
+    id 'org.ajoberstar.grgit' version '4.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id "io.freefair.lombok" version "6.0.0-m2"
+    id 'net.kyori.indra.checkstyle' version "1.2.1" apply false
+}
+
+group = 'dev.austech'
+version = '1.0.3'
+var dev = true
+
+// https://github.com/EssentialsX/Essentials/blob/2.x/build.gradle
+def commitsSinceLastTag() {
+    if (grgit == null) {
+        return 0
+    }
+    def tags = grgit.tag.list().stream().map({it.commit}).toList()
+    def commit = grgit.head()
+    def depth = 0
+    while (true) {
+        if (tags.contains(commit))
+            return depth
+        depth++
+        commit = grgit.resolve.toCommit(commit.parentIds.get(0))
+    }
+}
+
+ext {
+    GIT_COMMIT = grgit == null ? "unknown" : grgit.head().abbreviatedId
+    GIT_BRANCH = grgit == null ? "detached-head" : grgit.branch.current().name
+    GIT_DEPTH = commitsSinceLastTag()
+
+    fullVersion = dev ? "-dev+${GIT_DEPTH}-${GIT_COMMIT}" : ""
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: "io.freefair.lombok"
+
+    group = project.group
+    version = project.version
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://m2.dv8tion.net/releases' }
+    }
+
+    dependencies {
+        compileOnly 'net.dv8tion:JDA:4.2.1_262'
+        compileOnly 'org.projectlombok:lombok:1.18.20'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(path: ':BetterStaffChat-common', configuration: 'shadow')
+    implementation project(path: ':BetterStaffChat-spigot', configuration: 'shadow')
+    implementation project(path: ':BetterStaffChat-bungeecord', configuration: 'shadow')
+}
+
+shadowJar {
+    relocate 'net.dv8tion.jda', group + '.shaded.net.dv8tion.jda'
+}
+
+task copyJars(type: Copy) {
+    outputTasks().forEach({ from(it) })
+    rename '(.*)-all.jar', ('$1' + fullVersion + '.jar')
+    into file('jars')
+}
+
+def outputTasks() {
+    ["shadowJar", ":BetterStaffChat-spigot:shadowJar", ":BetterStaffChat-bungeecord:shadowJar"].stream().map({ tasks.findByPath(it) })
+}
+
+task cleanJars() {
+    delete file('jars')
+}
+
+clean.dependsOn cleanJars
+build.dependsOn shadowJar
+build.dependsOn copyJars
