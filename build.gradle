@@ -26,30 +26,14 @@ plugins {
 
 group = 'dev.austech'
 version = '1.0.3'
-var dev = true
+var dev = false
 
 // https://github.com/EssentialsX/Essentials/blob/2.x/build.gradle
-def commitsSinceLastTag() {
-    if (grgit == null) {
-        return 0
-    }
-    def tags = grgit.tag.list().stream().map({it.commit}).toList()
-    def commit = grgit.head()
-    def depth = 0
-    while (true) {
-        if (tags.contains(commit))
-            return depth
-        depth++
-        commit = grgit.resolve.toCommit(commit.parentIds.get(0))
-    }
-}
-
 ext {
     GIT_COMMIT = grgit == null ? "unknown" : grgit.head().abbreviatedId
     GIT_BRANCH = grgit == null ? "detached-head" : grgit.branch.current().name
-    GIT_DEPTH = commitsSinceLastTag()
 
-    fullVersion = dev ? "-dev+${GIT_DEPTH}-${GIT_COMMIT}" : ""
+    fullVersion = dev ? "-dev-${GIT_COMMIT}" : ""
 }
 
 subprojects {
@@ -86,7 +70,8 @@ dependencies {
 }
 
 shadowJar {
-    relocate 'net.dv8tion.jda', group + '.shaded.net.dv8tion.jda'
+    relocate 'net.dv8tion.jda', 'dev.austech.betterstaffchat.shaded.net.dv8tion.jda'
+    relocate'org.bstats', 'dev.austech.betterstaffchat.shaded.metrics'
 }
 
 task copyJars(type: Copy) {

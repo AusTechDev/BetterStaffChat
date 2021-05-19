@@ -107,6 +107,12 @@ discord:
     url: ""
 
   discord-messages:
+
+    # The format in game, for when someone sends a message in Discord
+    # Available placeholders: %username%, %discriminator% - The 4 numbers in the username
+    # %nickname% - The nickname on Discord
+    name-format: "%username%#%discriminator%"
+
     embed:
       # Whether or not the message sent to Discord should be an embed
       # true for yes, false for no.

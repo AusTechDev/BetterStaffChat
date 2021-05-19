@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.List;
 
 public class StaffChatUtil extends AbstractStaffChatUtil {
     @Getter private static final StaffChatUtil instance = new StaffChatUtil();
@@ -121,8 +122,15 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
                 }
             }
 
+            String nickName = ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getMember().getNickname();
+
+            String name = BetterStaffChatSpigot.getInstance().getConfig().getString("discord.discord-messages.name-format")
+                    .replace("%username%", ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getAuthor().getName())
+                    .replace("%discriminator%", ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getAuthor().getDiscriminator())
+                    .replace("%nickname%", nickName != null ? nickName : ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getAuthor().getName());
+
             String message = BetterStaffChatSpigot.getInstance().getConfig().getString("staffchat.format")
-                    .replace("%player_name%", ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getAuthor().getAsTag())
+                    .replace("%player_name%", name)
                     .replace("%message%", discordMessage.toString())
                     .replace("%server%",  "Discord")
                     .replaceAll("%\\S*%", "");

@@ -26,7 +26,6 @@ import dev.austech.betterstaffchat.bungeecord.command.ToggleStaffChatCommand;
 import dev.austech.betterstaffchat.bungeecord.listener.PlayerListener;
 import dev.austech.betterstaffchat.bungeecord.util.Config;
 import dev.austech.betterstaffchat.bungeecord.util.LuckPermsUtil;
-import dev.austech.betterstaffchat.bungeecord.util.Metrics;
 import dev.austech.betterstaffchat.bungeecord.util.StaffChatUtil;
 import dev.austech.betterstaffchat.common.DependencyLoader;
 import dev.austech.betterstaffchat.common.discord.JDAImplementation;
@@ -39,6 +38,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
+import org.bstats.bungeecord.Metrics;
 
 import javax.naming.ConfigurationException;
 import javax.security.auth.login.LoginException;

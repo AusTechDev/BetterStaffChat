@@ -1,4 +1,4 @@
 name: BetterStaffChat
 version: @version@
-main: dev.austech.betterstaffchat.BetterStaffChatSpigot
+main: dev.austech.betterstaffchat.spigot.BetterStaffChatSpigot
 author: AusTechDev

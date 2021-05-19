@@ -25,12 +25,14 @@ import dev.austech.betterstaffchat.common.util.AbstractStaffChatUtil;
 import dev.austech.betterstaffchat.common.util.LogUtil;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import lombok.Getter;
+import net.dv8tion.jda.api.entities.Role;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.List;
 
 public class StaffChatUtil extends AbstractStaffChatUtil {
     @Getter
@@ -127,8 +129,15 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
                 }
             }
 
+            String nickName = ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getMember().getNickname();
+
+            String name = BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.discord-messages.name-format")
+                    .replace("%username%", ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getAuthor().getName())
+                    .replace("%discriminator%", ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getAuthor().getDiscriminator())
+                    .replace("%nickname%", nickName != null ? nickName : ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getAuthor().getName());
+
             String message = BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.format")
-                    .replace("%player_name%", ((net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent) event).getAuthor().getAsTag())
+                    .replace("%player_name%", name)
                     .replace("%message%", discordMessage.toString())
                     .replace("%server%", "Discord")
                     .replaceAll("%\\S*%", "");
