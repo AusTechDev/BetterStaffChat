@@ -35,4 +35,4 @@ jobs:
         with:
           name: Artifacts-${{ steps.get-id.outputs.result }}
           path: |
-            target/*.jar
+            jars/*.jar
