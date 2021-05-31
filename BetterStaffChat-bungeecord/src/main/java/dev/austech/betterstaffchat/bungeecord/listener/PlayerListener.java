@@ -71,7 +71,10 @@ public class PlayerListener implements Listener {
     public void onPlayerPostLogin(PostLoginEvent event) {
         if (event.getPlayer().hasPermission("betterstaffchat.messages.join") && !BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.join").equals("")) {
             BetterStaffChatBungeeCord.getInstance().getProxy().getScheduler().schedule(BetterStaffChatBungeeCord.getInstance(), () -> {
-                if (event.getPlayer().getServer() == null) return;
+                // This is temporarily disable so a fix can be added. 
+                // Although it does prevent some errors, it stops the staff-chat working in some instances.
+                
+                // if (event.getPlayer().getServer() == null) return; 
                 String message = TextUtil.colorize(
                         BetterStaffChatBungeeCord.getInstance().getConfig().getString("staffchat.join")
                                 .replace("%player_name%", event.getPlayer().getName())
