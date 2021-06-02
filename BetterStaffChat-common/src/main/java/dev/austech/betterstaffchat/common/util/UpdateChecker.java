@@ -19,24 +19,26 @@
 package dev.austech.betterstaffchat.common.util;
 
 import dev.austech.betterstaffchat.common.util.LogUtil;
-import lombok.experimental.UtilityClass;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class UpdateChecker {
-    public boolean needsUpdate(Object plugin, String currentVersion) {
-        try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=91991").openStream()) {
-            Scanner scanner = new Scanner(inputStream);
-            if (scanner.hasNext()) {
-                return !currentVersion.equals(scanner.next());
-            }
-        } catch (IOException exception) {
-            LogUtil.logPrefix(plugin, "&cFailed to check for updates...");
-        }
-        return false;
+  public boolean needsUpdate(Object plugin, String currentVersion) {
+    try (
+        InputStream inputStream =
+            new URL("https://api.spigotmc.org/legacy/update.php?resource=91991")
+                .openStream()) {
+      Scanner scanner = new Scanner(inputStream);
+      if (scanner.hasNext()) {
+        return !currentVersion.equals(scanner.next());
+      }
+    } catch (IOException exception) {
+      LogUtil.logPrefix(plugin, "&cFailed to check for updates...");
     }
+    return false;
+  }
 }
