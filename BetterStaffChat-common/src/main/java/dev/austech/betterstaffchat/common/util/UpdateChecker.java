@@ -35,7 +35,7 @@ public class UpdateChecker {
                 return !currentVersion.equals(scanner.next());
             }
         } catch (IOException exception) {
-            LogUtil.logPrefix(plugin, "&Failed to check for updates...");
+            LogUtil.logPrefix(plugin, "&cFailed to check for updates...");
         }
         return false;
     }
