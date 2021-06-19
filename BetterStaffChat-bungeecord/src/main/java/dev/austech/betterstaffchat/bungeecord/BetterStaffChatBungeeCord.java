@@ -34,6 +34,14 @@ import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import dev.austech.betterstaffchat.common.util.UpdateChecker;
 import io.sentry.Sentry;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import javax.naming.ConfigurationException;
+import javax.security.auth.login.LoginException;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.CommandSender;
@@ -43,154 +51,198 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import org.bstats.bungeecord.Metrics;
 
-import javax.naming.ConfigurationException;
-import javax.security.auth.login.LoginException;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
+public final class BetterStaffChatBungeeCord
+    extends Plugin implements BetterStaffChatPlugin {
+  @Getter private static BetterStaffChatBungeeCord instance;
+  @Getter @Setter private Configuration config;
+  @Getter private final ArrayList<UUID> ignoreStaffChat = Lists.newArrayList();
+  @Getter private final ArrayList<UUID> toggledStaffChat = Lists.newArrayList();
+  @Getter private JDAImplementation jda;
+  @Getter boolean discordEnabled;
+  @Getter boolean sentryEnabled;
 
-public final class BetterStaffChatBungeeCord extends Plugin implements BetterStaffChatPlugin {
-    @Getter private static BetterStaffChatBungeeCord instance;
-    @Getter @Setter private Configuration config;
-    @Getter private final ArrayList<UUID> ignoreStaffChat = Lists.newArrayList();
-    @Getter private final ArrayList<UUID> toggledStaffChat = Lists.newArrayList();
-    @Getter private JDAImplementation jda;
-    @Getter boolean discordEnabled;
-    @Getter boolean sentryEnabled;
+  @Override
+  public void onEnable() {
+    instance = this;
 
-    @Override
-    public void onEnable() {
-        instance = this;
+    TextUtil.init(false, this);
+    Config.load();
 
-        TextUtil.init(false, this);
-        Config.load();
+    if (getConfig().getBoolean("check-for-updates"))
+      getProxy().getScheduler().runAsync(this, () -> {
+        if (UpdateChecker.needsUpdate(this, getDescription().getVersion())) {
+          getProxy().getScheduler().schedule(this, () -> {
+            logPrefix("&eA new update for BetterStaffChat is available...");
+            logPrefix("&ehttps://www.spigotmc.org/resources/91991");
+          }, 3, TimeUnit.SECONDS);
+        }
+      });
 
-        if (getConfig().getBoolean("check-for-updates"))
-            getProxy().getScheduler().runAsync(this, () -> {
-                if (UpdateChecker.needsUpdate(this, getDescription().getVersion())) {
-                    getProxy().getScheduler().schedule(this, () -> {
-                        logPrefix("&eA new update for BetterStaffChat is available...");
-                        logPrefix("&ehttps://www.spigotmc.org/resources/91991");
-                    }, 3, TimeUnit.SECONDS);
-                }
-            });
+    new Metrics(this, 10954);
 
-        new Metrics(this, 10954);
+    if (getConfig().getBoolean("discord.bot.enabled") &&
+        getConfig().getBoolean("discord.webhook.enabled")) {
+      new ConfigurationException("Both Discord types are enabled")
+          .printStackTrace();
+      return;
+    }
 
-        if (getConfig().getBoolean("discord.bot.enabled") && getConfig().getBoolean("discord.webhook.enabled")) {
-            new ConfigurationException("Both Discord types are enabled").printStackTrace();
+    if (this.getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
+      LuckPermsUtil.setLuckPerms(net.luckperms.api.LuckPermsProvider.get());
+    }
+
+    this.discordEnabled = getConfig().getBoolean("discord.bot.enabled");
+    this.sentryEnabled = getConfig().getBoolean("error-reporting");
+
+    if (discordEnabled || sentryEnabled) {
+      DependencyEngine dependencyEngine = DependencyEngine.createNew(
+          new File(getPluginDataFolder(), "libs").toPath());
+      dependencyEngine.addDependenciesFromProvider(
+          BetterStaffChatDependencyProvider.getDependencies(discordEnabled,
+                                                            sentryEnabled));
+
+      dependencyEngine.loadDependencies().thenAccept((empty) -> {
+        if (!dependencyEngine.getErrors().isEmpty()) {
+          Optional<Throwable> opt =
+              dependencyEngine.getErrors()
+                  .stream()
+                  .filter(
+                      throwable
+                      -> throwable.getMessage().contains(
+                          "Unable to make protected void java.net.URLClassLoader.addURL(java.net.URL) accessible: module java.base does not"))
+                  .findFirst();
+          if (opt.isPresent()) {
+            getLogger().log(
+                Level.SEVERE,
+                "An error occurred whilst starting BetterStaffChat - This is due to Java 16 being unsupported.");
+            getLogger().log(
+                Level.SEVERE,
+                "This error is fixable, please add the following flags to your startup after the \"java\":");
+            getLogger().log(Level.SEVERE, "");
+            getLogger().log(Level.SEVERE,
+                            "--add-opens java.base/java.net=ALL-UNNAMED");
             return;
+          } else {
+            dependencyEngine.getErrors().forEach(Throwable::printStackTrace);
+            getLogger().log(Level.SEVERE,
+                            "Errors occurred whilst loading BSC.");
+            return;
+          }
         }
 
-        if (this.getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
-            LuckPermsUtil.setLuckPerms(net.luckperms.api.LuckPermsProvider.get());
-        }
-
-        this.discordEnabled = getConfig().getBoolean("discord.bot.enabled");
-        this.sentryEnabled = getConfig().getBoolean("error-reporting");
-
-        if (discordEnabled || sentryEnabled) {
-            DependencyEngine dependencyEngine = DependencyEngine.createNew(new File(getPluginDataFolder(), "libs").toPath());
-            dependencyEngine.addDependenciesFromProvider(BetterStaffChatDependencyProvider.getDependencies(discordEnabled, sentryEnabled));
-
-            dependencyEngine.loadDependencies().thenAccept((empty) -> {
-                if (!dependencyEngine.getErrors().isEmpty()) {
-                    Optional<Throwable> opt = dependencyEngine.getErrors().stream().filter(throwable -> throwable.getMessage().contains("Unable to make protected void java.net.URLClassLoader.addURL(java.net.URL) accessible: module java.base does not")).findFirst();
-                    if (opt.isPresent()) {
-                        getLogger().log(Level.SEVERE, "An error occurred whilst starting BetterStaffChat - This is due to Java 16 being unsupported.");
-                        getLogger().log(Level.SEVERE, "This error is fixable, please add the following flags to your startup after the \"java\":");
-                        getLogger().log(Level.SEVERE, "");
-                        getLogger().log(Level.SEVERE, "--add-opens java.base/java.net=ALL-UNNAMED");
-                        return;
-                    } else {
-                        dependencyEngine.getErrors().forEach(Throwable::printStackTrace);
-                        getLogger().log(Level.SEVERE, "Errors occurred whilst loading BSC.");
-                        return;
-                    }
-                }
-
-                if (discordEnabled) {
-                    this.getProxy().getScheduler().runAsync(this, () -> {
-                        try {
-                            this.jda = new JDAImplementation(net.dv8tion.jda.api.JDABuilder.createLight(getConfig().getString("discord.bot.token")).build(), StaffChatUtil.getInstance());
-                            ((JDAImplementation) jda).asJda().getPresence().setActivity(net.dv8tion.jda.api.entities.Activity.of(
-                                    net.dv8tion.jda.api.entities.Activity.ActivityType.valueOf(getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
-                                    getConfig().getString("discord.bot.activity")
-                            ));
-                        } catch (LoginException exception) {
-                            exception.printStackTrace();
-                            return;
-                        }
-                    });
-                }
-
-                if (sentryEnabled && !getDescription().getVersion().contains("dev")) {
-                    Sentry.init(options -> {
-                        options.setDsn("https://e0bb277eb7b7410b88253b9f366ff532@o547061.ingest.sentry.io/5746942");
-                        options.setRelease("betterstaffchat@" + getDescription().getVersion());
-                        options.setTag("platform", "bungeecord");
-                    });
-                }
-            });
-
-            if (dependencyEngine.getErrors().isEmpty()) {
-                this.getProxy().getPluginManager().registerListener(this, new PlayerListener());
-                registerCommands();
+        if (discordEnabled) {
+          this.getProxy().getScheduler().runAsync(this, () -> {
+            try {
+              this.jda = new JDAImplementation(
+                  net.dv8tion.jda.api.JDABuilder
+                      .createLight(getConfig().getString("discord.bot.token"))
+                      .build(),
+                  StaffChatUtil.getInstance());
+              ((JDAImplementation)jda)
+                  .asJda()
+                  .getPresence()
+                  .setActivity(net.dv8tion.jda.api.entities.Activity.of(
+                      net.dv8tion.jda.api.entities.Activity.ActivityType
+                          .valueOf(getConfig()
+                                       .getString("discord.bot.activity-type")
+                                       .toUpperCase()
+                                       .replace("PLAYING", "DEFAULT")),
+                      getConfig().getString("discord.bot.activity")));
+            } catch (LoginException exception) {
+              exception.printStackTrace();
+              return;
             }
-
-        } else {
-            this.getProxy().getPluginManager().registerListener(this, new PlayerListener());
-            registerCommands();
+          });
         }
-    }
 
-    public File getPluginDataFolder() {
-        return getDataFolder();
-    }
+        if (sentryEnabled && !getDescription().getVersion().contains("dev")) {
+          Sentry.init(options -> {
+            options.setDsn(
+                "https://e0bb277eb7b7410b88253b9f366ff532@o547061.ingest.sentry.io/5746942");
+            options.setRelease("betterstaffchat@" +
+                               getDescription().getVersion());
+            options.setTag("platform", "bungeecord");
+          });
+        }
+      });
 
-    public void logPrefix(String string) {
-        getProxy().getConsole().sendMessage(new TextComponent("[BetterStaffChat] " + TextUtil.colorize(string)));
-    }
-
-    public void logPrefixDebug(String string) {
-        if (getConfig().getBoolean("debug"))
-            getProxy().getConsole().sendMessage(new TextComponent("[BetterStaffChat] Debug - " + TextUtil.colorize(string)));
-    }
-
-    public void log(String string) {
-        getProxy().getConsole().sendMessage(new TextComponent(TextUtil.colorize(string)));
-    }
-
-    public boolean reloadConfig(CommandSender sender) {
-        boolean discordLoaded = getConfig().getBoolean("discord.bot.enabled");
-        Config.load();
-
-        getProxy().getPluginManager().unregisterCommands(this);
+      if (dependencyEngine.getErrors().isEmpty()) {
+        this.getProxy().getPluginManager().registerListener(
+            this, new PlayerListener());
         registerCommands();
+      }
 
-        if (getConfig().getBoolean("discord.bot.enabled") != discordLoaded) {
-            logPrefix("&cYou enabled the discord bot in the config. Please restart the server for changes to take effect.");
-            if (sender instanceof ProxiedPlayer)
-                sender.sendMessage(TextUtil.colorizeToComponent("&cYou enabled the discord bot in the config. Please restart the server for changes to take effect."));
-            return true;
-        }
-        return false;
+    } else {
+      this.getProxy().getPluginManager().registerListener(this,
+                                                          new PlayerListener());
+      registerCommands();
     }
+  }
 
-    private void registerCommands() {
-        this.getProxy().getScheduler().runAsync(this, () -> {
-            this.getProxy().getPluginManager().registerCommand(this, new BetterStaffChatCommand());
-            this.getProxy().getPluginManager().registerCommand(this, new StaffChatCommand("staffchat", "betterstaffchat.messages.send", getConfig().getStringList("commands.staffchat.aliases").toArray(new String[0])));
-            this.getProxy().getPluginManager().registerCommand(this, new MuteStaffChatCommand("mutestaffchat", "betterstaffchat.mutestaffchat", getConfig().getStringList("commands.mutestaffchat.aliases").toArray(new String[0])));
-            this.getProxy().getPluginManager().registerCommand(this, new ToggleStaffChatCommand("togglestaffchat", "betterstaffchat.togglestaffchat", getConfig().getStringList("commands.togglestaffchat.aliases").toArray(new String[0])));
-        });
-    }
+  public File getPluginDataFolder() { return getDataFolder(); }
 
-    @Override
-    public void onDisable() {
-        if (isDiscordEnabled()) (getJda()).shutdown();
+  public void logPrefix(String string) {
+    getProxy().getConsole().sendMessage(
+        new TextComponent("[BetterStaffChat] " + TextUtil.colorize(string)));
+  }
+
+  public void logPrefixDebug(String string) {
+    if (getConfig().getBoolean("debug"))
+      getProxy().getConsole().sendMessage(new TextComponent(
+          "[BetterStaffChat] Debug - " + TextUtil.colorize(string)));
+  }
+
+  public void log(String string) {
+    getProxy().getConsole().sendMessage(
+        new TextComponent(TextUtil.colorize(string)));
+  }
+
+  public boolean reloadConfig(CommandSender sender) {
+    boolean discordLoaded = getConfig().getBoolean("discord.bot.enabled");
+    Config.load();
+
+    getProxy().getPluginManager().unregisterCommands(this);
+    registerCommands();
+
+    if (getConfig().getBoolean("discord.bot.enabled") != discordLoaded) {
+      logPrefix(
+          "&cYou enabled the discord bot in the config. Please restart the server for changes to take effect.");
+      if (sender instanceof ProxiedPlayer)
+        sender.sendMessage(TextUtil.colorizeToComponent(
+            "&cYou enabled the discord bot in the config. Please restart the server for changes to take effect."));
+      return true;
     }
+    return false;
+  }
+
+  private void registerCommands() {
+    this.getProxy().getScheduler().runAsync(this, () -> {
+      this.getProxy().getPluginManager().registerCommand(
+          this, new BetterStaffChatCommand());
+      this.getProxy().getPluginManager().registerCommand(
+          this,
+          new StaffChatCommand("staffchat", "betterstaffchat.messages.send",
+                               getConfig()
+                                   .getStringList("commands.staffchat.aliases")
+                                   .toArray(new String[0])));
+      this.getProxy().getPluginManager().registerCommand(
+          this, new MuteStaffChatCommand(
+                    "mutestaffchat", "betterstaffchat.mutestaffchat",
+                    getConfig()
+                        .getStringList("commands.mutestaffchat.aliases")
+                        .toArray(new String[0])));
+      this.getProxy().getPluginManager().registerCommand(
+          this, new ToggleStaffChatCommand(
+                    "togglestaffchat", "betterstaffchat.togglestaffchat",
+                    getConfig()
+                        .getStringList("commands.togglestaffchat.aliases")
+                        .toArray(new String[0])));
+    });
+  }
+
+  @Override
+  public void onDisable() {
+    if (isDiscordEnabled())
+      (getJda()).shutdown();
+  }
 }
