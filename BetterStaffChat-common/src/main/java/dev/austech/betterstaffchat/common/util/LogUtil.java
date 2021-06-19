@@ -18,33 +18,22 @@
 
 package dev.austech.betterstaffchat.common.util;
 
+import dev.austech.betterstaffchat.common.BetterStaffChatPlugin;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.InvocationTargetException;
 
 @UtilityClass
 public class LogUtil {
-    public void log(Object plugin, String string) {
-        try {
-            plugin.getClass().getMethod("log", String.class).invoke(plugin, string);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        } // log level
+    public void log(BetterStaffChatPlugin plugin, String string) {
+        plugin.log(string);
     }
 
-    public static void logPrefix(Object plugin, String string) {
-        try {
-            plugin.getClass().getMethod("logPrefix", String.class).invoke(plugin, string);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        } // log level
+    public static void logPrefix(BetterStaffChatPlugin plugin, String string) {
+        plugin.logPrefix(string);
     }
 
-    public void logPrefixDebug(Object plugin, String string) {
-        try {
-            plugin.getClass().getMethod("logPrefixDebug", String.class).invoke(plugin, string);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            ex.printStackTrace();
-        } // log level
+    public void logPrefixDebug(BetterStaffChatPlugin plugin, String string) {
+        plugin.logPrefixDebug(string);
     }
 }

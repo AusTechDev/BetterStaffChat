@@ -19,7 +19,9 @@
 package dev.austech.betterstaffchat.spigot;
 
 import com.google.common.collect.Lists;
-import dev.austech.betterstaffchat.common.DependencyLoader;
+import dev.austech.betterstaffchat.common.BetterStaffChatPlugin;
+import dev.austech.betterstaffchat.common.dependency.BetterStaffChatDependencyProvider;
+import dev.austech.betterstaffchat.common.dependency.DependencyEngine;
 import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import dev.austech.betterstaffchat.common.util.UpdateChecker;
@@ -46,9 +48,11 @@ import javax.naming.ConfigurationException;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 
-public final class BetterStaffChatSpigot extends JavaPlugin {
+public final class BetterStaffChatSpigot extends JavaPlugin implements BetterStaffChatPlugin {
 
     @Getter private static BetterStaffChatSpigot instance;
     @Getter private final ArrayList<UUID> ignoreStaffChat = Lists.newArrayList();
@@ -83,22 +87,42 @@ public final class BetterStaffChatSpigot extends JavaPlugin {
 
         this.discordEnabled = getConfig().getBoolean("discord.bot.enabled");
 
-        DependencyLoader.init(this);
 
-        if (discordEnabled) {
-            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-                try {
-                    this.jda = new JDAImplementation(JDABuilder.createLight(getConfig().getString("discord.bot.token")).build(), StaffChatUtil.getInstance());
-                    ((JDAImplementation) jda).asJda().getPresence().setActivity(Activity.of(
-                            Activity.ActivityType.valueOf(getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
-                            getConfig().getString("discord.bot.activity")
-                    ));
-                } catch (LoginException exception) {
-                    exception.printStackTrace();
+        DependencyEngine dependencyEngine = DependencyEngine.createNew(new File(getPluginDataFolder(), "libs").toPath());
+        dependencyEngine.addDependenciesFromProvider(BetterStaffChatDependencyProvider.getDependencies());
+        dependencyEngine.loadDependencies().thenAccept((empty) -> {
+            if (!dependencyEngine.getErrors().isEmpty()) {
+                Optional<Throwable> opt = dependencyEngine.getErrors().stream().filter(throwable -> throwable.getMessage().contains("Unable to make protected void java.net.URLClassLoader.addURL(java.net.URL) accessible: module java.base does not")).findFirst();
+                if (opt.isPresent()) {
+                    getLogger().log(Level.SEVERE, "An error occurred whilst starting BetterStaffChat - This is due to Java 16 being unsupported.");
+                    getLogger().log(Level.SEVERE, "This error is fixable, please add the following flags to your startup after the \"java\":");
+                    getLogger().log(Level.SEVERE, "");
+                    getLogger().log(Level.SEVERE, "--add-opens java.base/java.net=ALL-UNNAMED");
                     this.getPluginLoader().disablePlugin(this);
+                    return;
+                } else {
+                    dependencyEngine.getErrors().forEach(Throwable::printStackTrace);
+                    getLogger().log(Level.SEVERE, "Errors occurred whilst loading BSC.");
+                    this.getPluginLoader().disablePlugin(this);
+                    return;
                 }
-            });
-        }
+            }
+
+            if (discordEnabled) {
+                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                    try {
+                        this.jda = new JDAImplementation(JDABuilder.createLight(getConfig().getString("discord.bot.token")).build(), StaffChatUtil.getInstance());
+                        ((JDAImplementation) jda).asJda().getPresence().setActivity(Activity.of(
+                                Activity.ActivityType.valueOf(getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
+                                getConfig().getString("discord.bot.activity")
+                        ));
+                    } catch (LoginException exception) {
+                        exception.printStackTrace();
+                        this.getPluginLoader().disablePlugin(this);
+                    }
+                });
+            }
+        });
 
         registerCommands();
 
@@ -144,7 +168,8 @@ public final class BetterStaffChatSpigot extends JavaPlugin {
     }
 
     public void logPrefixDebug(String string) {
-        if (getConfig().getBoolean("debug")) Bukkit.getConsoleSender().sendMessage("[BetterStaffChat] Debug - " + TextUtil.colorize(string));
+        if (getConfig().getBoolean("debug"))
+            Bukkit.getConsoleSender().sendMessage("[BetterStaffChat] Debug - " + TextUtil.colorize(string));
     }
 
     public String getVersion() {

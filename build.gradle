@@ -25,8 +25,8 @@ plugins {
 }
 
 group = 'dev.austech'
-version = '1.0.3'
-var dev = false
+version = '1.1.0-SNAPSHOT'
+var dev = true
 
 // https://github.com/EssentialsX/Essentials/blob/2.x/build.gradle
 ext {
@@ -69,8 +69,12 @@ dependencies {
     implementation project(path: ':BetterStaffChat-bungeecord', configuration: 'shadow')
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 shadowJar {
-    relocate 'net.dv8tion.jda', 'dev.austech.betterstaffchat.shaded.net.dv8tion.jda'
+    relocate 'net.dv8tion.jda', 'dev.austech.betterstaffchat.shaded.jda'
     relocate'org.bstats', 'dev.austech.betterstaffchat.shaded.metrics'
 }
 

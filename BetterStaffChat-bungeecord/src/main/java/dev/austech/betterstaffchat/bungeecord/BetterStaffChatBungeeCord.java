@@ -27,7 +27,9 @@ import dev.austech.betterstaffchat.bungeecord.listener.PlayerListener;
 import dev.austech.betterstaffchat.bungeecord.util.Config;
 import dev.austech.betterstaffchat.bungeecord.util.LuckPermsUtil;
 import dev.austech.betterstaffchat.bungeecord.util.StaffChatUtil;
-import dev.austech.betterstaffchat.common.DependencyLoader;
+import dev.austech.betterstaffchat.common.BetterStaffChatPlugin;
+import dev.austech.betterstaffchat.common.dependency.BetterStaffChatDependencyProvider;
+import dev.austech.betterstaffchat.common.dependency.DependencyEngine;
 import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import dev.austech.betterstaffchat.common.util.UpdateChecker;
@@ -44,10 +46,12 @@ import javax.naming.ConfigurationException;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
-public final class BetterStaffChatBungeeCord extends Plugin {
+public final class BetterStaffChatBungeeCord extends Plugin implements BetterStaffChatPlugin {
     @Getter private static BetterStaffChatBungeeCord instance;
     @Getter @Setter private Configuration config;
     @Getter private final ArrayList<UUID> ignoreStaffChat = Lists.newArrayList();
@@ -85,25 +89,43 @@ public final class BetterStaffChatBungeeCord extends Plugin {
 
         this.discordEnabled = getConfig().getBoolean("discord.bot.enabled");
 
-        DependencyLoader.init(this);
+        DependencyEngine dependencyEngine = DependencyEngine.createNew(new File(getPluginDataFolder(), "libs").toPath());
+        dependencyEngine.addDependenciesFromProvider(BetterStaffChatDependencyProvider.getDependencies());
 
-        if (discordEnabled) {
-            this.getProxy().getScheduler().runAsync(this, () -> {
-                try {
-                    this.jda = new JDAImplementation(net.dv8tion.jda.api.JDABuilder.createLight(getConfig().getString("discord.bot.token")).build(), StaffChatUtil.getInstance());
-                    ((JDAImplementation) jda).asJda().getPresence().setActivity(net.dv8tion.jda.api.entities.Activity.of(
-                            net.dv8tion.jda.api.entities.Activity.ActivityType.valueOf(getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
-                            getConfig().getString("discord.bot.activity")
-                    ));
-                } catch (LoginException exception) {
-                    exception.printStackTrace();
+        dependencyEngine.loadDependencies().thenAccept((empty) -> {
+            if (!dependencyEngine.getErrors().isEmpty()) {
+                Optional<Throwable> opt = dependencyEngine.getErrors().stream().filter(throwable -> throwable.getMessage().contains("Unable to make protected void java.net.URLClassLoader.addURL(java.net.URL) accessible: module java.base does not")).findFirst();
+                if (opt.isPresent()) {
+                    getLogger().log(Level.SEVERE, "An error occurred whilst starting BetterStaffChat - This is due to Java 16 being unsupported.");
+                    getLogger().log(Level.SEVERE, "This error is fixable, please add the following flags to your startup after the \"java\":");
+                    getLogger().log(Level.SEVERE, "");
+                    getLogger().log(Level.SEVERE, "--add-opens java.base/java.net=ALL-UNNAMED");
+                    return;
+                } else {
+                    dependencyEngine.getErrors().forEach(Throwable::printStackTrace);
+                    getLogger().log(Level.SEVERE, "Errors occurred whilst loading BSC.");
                     return;
                 }
-            });
-        }
+            }
 
-        this.getProxy().getPluginManager().registerListener(this, new PlayerListener());
-        registerCommands();
+            if (discordEnabled) {
+                this.getProxy().getScheduler().runAsync(this, () -> {
+                    try {
+                        this.jda = new JDAImplementation(net.dv8tion.jda.api.JDABuilder.createLight(getConfig().getString("discord.bot.token")).build(), StaffChatUtil.getInstance());
+                        ((JDAImplementation) jda).asJda().getPresence().setActivity(net.dv8tion.jda.api.entities.Activity.of(
+                                net.dv8tion.jda.api.entities.Activity.ActivityType.valueOf(getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
+                                getConfig().getString("discord.bot.activity")
+                        ));
+                    } catch (LoginException exception) {
+                        exception.printStackTrace();
+                        return;
+                    }
+                });
+            }
+
+            this.getProxy().getPluginManager().registerListener(this, new PlayerListener());
+            registerCommands();
+        });
     }
 
     public File getPluginDataFolder() {
@@ -115,7 +137,8 @@ public final class BetterStaffChatBungeeCord extends Plugin {
     }
 
     public void logPrefixDebug(String string) {
-        if (getConfig().getBoolean("debug")) getProxy().getConsole().sendMessage(new TextComponent("[BetterStaffChat] Debug - " + TextUtil.colorize(string)));
+        if (getConfig().getBoolean("debug"))
+            getProxy().getConsole().sendMessage(new TextComponent("[BetterStaffChat] Debug - " + TextUtil.colorize(string)));
     }
 
     public void log(String string) {
