@@ -50,7 +50,7 @@ public final class TextUtil {
         if (serverVersion.isEmpty()) {
             throw new IllegalArgumentException("Server version has not been set.");
         }
-        if (serverVersion.equals("new enough") || serverVersion.contains("1.16") || serverVersion.contains("1.17")) // TODO: Make this dynamic later
+        if (serverVersion.equals("new enough") || serverVersion.contains("1.16") || serverVersion.contains("1.17"))
             return ChatColor.translateAlternateColorCodes('&', colorizeRgb(string));
         else return ChatColor.translateAlternateColorCodes('&', string);
     }
