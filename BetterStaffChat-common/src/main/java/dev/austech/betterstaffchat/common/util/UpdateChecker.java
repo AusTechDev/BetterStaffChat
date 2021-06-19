@@ -19,7 +19,6 @@
 package dev.austech.betterstaffchat.common.util;
 
 import dev.austech.betterstaffchat.common.BetterStaffChatPlugin;
-import dev.austech.betterstaffchat.common.util.LogUtil;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -30,6 +29,8 @@ import java.util.Scanner;
 @UtilityClass
 public class UpdateChecker {
     public boolean needsUpdate(BetterStaffChatPlugin plugin, String currentVersion) {
+        if (currentVersion.contains("dev")) return false;
+
         try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=91991").openStream()) {
             Scanner scanner = new Scanner(inputStream);
             if (scanner.hasNext()) {

@@ -16,17 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.apache.tools.ant.filters.ReplaceTokens
-
 dependencies {
     compileOnly 'me.lucko:jar-relocator:1.4'
     compileOnly 'net.md-5:bungeecord-chat:1.16-R0.4'
-}
-
-processResources {
-    filter ReplaceTokens, tokens: [
-            "version": parent.getVersion()
-    ]
 }
 
 tasks.build.dependsOn tasks.shadowJar

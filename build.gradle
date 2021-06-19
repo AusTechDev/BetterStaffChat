@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.eclipse.jgit.lib.Ref
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevWalk
@@ -31,7 +33,6 @@ plugins {
 
 group = 'dev.austech'
 version = '1.1.0-SNAPSHOT'
-var dev = true
 
 // https://github.com/EssentialsX/Essentials/blob/2.x/build.gradle
 @SuppressWarnings('GrMethodMayBeStatic')
@@ -106,9 +107,17 @@ subprojects {
         compileOnly 'org.projectlombok:lombok:1.18.20'
     }
 
+    processResources {
+        inputs.property('fullVersion', fullVersion)
+        filter ReplaceTokens, tokens: [
+                "version": fullVersion
+        ]
+    }
+
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
     }
+
     tasks.withType(Jar) {
         archiveVersion.set(fullVersion)
     }
@@ -126,7 +135,7 @@ dependencies {
 
 shadowJar {
     relocate 'net.dv8tion.jda', 'dev.austech.betterstaffchat.shaded.jda'
-    relocate'org.bstats', 'dev.austech.betterstaffchat.shaded.metrics'
+    relocate 'org.bstats', 'dev.austech.betterstaffchat.shaded.metrics'
 }
 
 task copyJars(type: Copy) {
