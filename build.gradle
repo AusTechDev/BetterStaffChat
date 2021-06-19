@@ -105,6 +105,7 @@ subprojects {
     dependencies {
         compileOnly 'net.dv8tion:JDA:4.2.1_262'
         compileOnly 'org.projectlombok:lombok:1.18.20'
+        compileOnly 'io.sentry:sentry:5.0.1'
     }
 
     processResources {
@@ -135,6 +136,7 @@ dependencies {
 
 shadowJar {
     relocate 'net.dv8tion.jda', 'dev.austech.betterstaffchat.shaded.jda'
+    relocate 'io.sentry', 'dev.austech.betterstaffchat.shaded.sentry'
     relocate 'org.bstats', 'dev.austech.betterstaffchat.shaded.metrics'
 }
 

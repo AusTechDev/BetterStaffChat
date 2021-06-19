@@ -33,6 +33,7 @@ import dev.austech.betterstaffchat.common.dependency.DependencyEngine;
 import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import dev.austech.betterstaffchat.common.util.UpdateChecker;
+import io.sentry.Sentry;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.CommandSender;
@@ -58,6 +59,7 @@ public final class BetterStaffChatBungeeCord extends Plugin implements BetterSta
     @Getter private final ArrayList<UUID> toggledStaffChat = Lists.newArrayList();
     @Getter private JDAImplementation jda;
     @Getter boolean discordEnabled;
+    @Getter boolean sentryEnabled;
 
     @Override
     public void onEnable() {
@@ -88,44 +90,61 @@ public final class BetterStaffChatBungeeCord extends Plugin implements BetterSta
         }
 
         this.discordEnabled = getConfig().getBoolean("discord.bot.enabled");
+        this.sentryEnabled = getConfig().getBoolean("error-reporting");
 
-        DependencyEngine dependencyEngine = DependencyEngine.createNew(new File(getPluginDataFolder(), "libs").toPath());
-        dependencyEngine.addDependenciesFromProvider(BetterStaffChatDependencyProvider.getDependencies());
+        if (discordEnabled || sentryEnabled) {
+            DependencyEngine dependencyEngine = DependencyEngine.createNew(new File(getPluginDataFolder(), "libs").toPath());
+            dependencyEngine.addDependenciesFromProvider(BetterStaffChatDependencyProvider.getDependencies(discordEnabled, sentryEnabled));
 
-        dependencyEngine.loadDependencies().thenAccept((empty) -> {
-            if (!dependencyEngine.getErrors().isEmpty()) {
-                Optional<Throwable> opt = dependencyEngine.getErrors().stream().filter(throwable -> throwable.getMessage().contains("Unable to make protected void java.net.URLClassLoader.addURL(java.net.URL) accessible: module java.base does not")).findFirst();
-                if (opt.isPresent()) {
-                    getLogger().log(Level.SEVERE, "An error occurred whilst starting BetterStaffChat - This is due to Java 16 being unsupported.");
-                    getLogger().log(Level.SEVERE, "This error is fixable, please add the following flags to your startup after the \"java\":");
-                    getLogger().log(Level.SEVERE, "");
-                    getLogger().log(Level.SEVERE, "--add-opens java.base/java.net=ALL-UNNAMED");
-                    return;
-                } else {
-                    dependencyEngine.getErrors().forEach(Throwable::printStackTrace);
-                    getLogger().log(Level.SEVERE, "Errors occurred whilst loading BSC.");
-                    return;
-                }
-            }
-
-            if (discordEnabled) {
-                this.getProxy().getScheduler().runAsync(this, () -> {
-                    try {
-                        this.jda = new JDAImplementation(net.dv8tion.jda.api.JDABuilder.createLight(getConfig().getString("discord.bot.token")).build(), StaffChatUtil.getInstance());
-                        ((JDAImplementation) jda).asJda().getPresence().setActivity(net.dv8tion.jda.api.entities.Activity.of(
-                                net.dv8tion.jda.api.entities.Activity.ActivityType.valueOf(getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
-                                getConfig().getString("discord.bot.activity")
-                        ));
-                    } catch (LoginException exception) {
-                        exception.printStackTrace();
+            dependencyEngine.loadDependencies().thenAccept((empty) -> {
+                if (!dependencyEngine.getErrors().isEmpty()) {
+                    Optional<Throwable> opt = dependencyEngine.getErrors().stream().filter(throwable -> throwable.getMessage().contains("Unable to make protected void java.net.URLClassLoader.addURL(java.net.URL) accessible: module java.base does not")).findFirst();
+                    if (opt.isPresent()) {
+                        getLogger().log(Level.SEVERE, "An error occurred whilst starting BetterStaffChat - This is due to Java 16 being unsupported.");
+                        getLogger().log(Level.SEVERE, "This error is fixable, please add the following flags to your startup after the \"java\":");
+                        getLogger().log(Level.SEVERE, "");
+                        getLogger().log(Level.SEVERE, "--add-opens java.base/java.net=ALL-UNNAMED");
+                        return;
+                    } else {
+                        dependencyEngine.getErrors().forEach(Throwable::printStackTrace);
+                        getLogger().log(Level.SEVERE, "Errors occurred whilst loading BSC.");
                         return;
                     }
-                });
+                }
+
+                if (discordEnabled) {
+                    this.getProxy().getScheduler().runAsync(this, () -> {
+                        try {
+                            this.jda = new JDAImplementation(net.dv8tion.jda.api.JDABuilder.createLight(getConfig().getString("discord.bot.token")).build(), StaffChatUtil.getInstance());
+                            ((JDAImplementation) jda).asJda().getPresence().setActivity(net.dv8tion.jda.api.entities.Activity.of(
+                                    net.dv8tion.jda.api.entities.Activity.ActivityType.valueOf(getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
+                                    getConfig().getString("discord.bot.activity")
+                            ));
+                        } catch (LoginException exception) {
+                            exception.printStackTrace();
+                            return;
+                        }
+                    });
+                }
+
+                if (sentryEnabled && !getDescription().getVersion().contains("dev")) {
+                    Sentry.init(options -> {
+                        options.setDsn("https://e0bb277eb7b7410b88253b9f366ff532@o547061.ingest.sentry.io/5746942");
+                        options.setRelease("betterstaffchat@" + getDescription().getVersion());
+                        options.setTag("platform", "bungeecord");
+                    });
+                }
+            });
+
+            if (dependencyEngine.getErrors().isEmpty()) {
+                this.getProxy().getPluginManager().registerListener(this, new PlayerListener());
+                registerCommands();
             }
 
+        } else {
             this.getProxy().getPluginManager().registerListener(this, new PlayerListener());
             registerCommands();
-        });
+        }
     }
 
     public File getPluginDataFolder() {

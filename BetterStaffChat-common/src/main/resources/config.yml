@@ -160,8 +160,11 @@ commands: # Options for commands | Aliases can not be the same, nor can they be 
 # Disable this to stop the plugin checking for updates on startup
 check-for-updates: true
 
+# Error reporting - Sends anonymous details about the error to the developers.
+error-reporting: true
+
 # Don't touch unless you know what you are doing
 debug: false
 
 # no touchy me please [DO NOT TOUCH AS IT CAN BREAK YOUR CONFIG]
-config-version: 4
+config-version: 5
