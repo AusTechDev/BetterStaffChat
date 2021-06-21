@@ -19,10 +19,8 @@
 package dev.austech.betterstaffchat.spigot.util;
 
 import dev.austech.betterstaffchat.common.discord.DiscordWebhook;
-import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.AbstractStaffChatUtil;
 import dev.austech.betterstaffchat.common.util.TextUtil;
-import dev.austech.betterstaffchat.common.util.LogUtil;
 import dev.austech.betterstaffchat.spigot.BetterStaffChatSpigot;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
@@ -31,7 +29,6 @@ import org.bukkit.entity.Player;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.List;
 
 public class StaffChatUtil extends AbstractStaffChatUtil {
     @Getter private static final StaffChatUtil instance = new StaffChatUtil();
@@ -90,19 +87,19 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
                     webhook.execute();
                 } catch (IOException exception) {
                     exception.printStackTrace();
-                    LogUtil.log(BetterStaffChatSpigot.getInstance(), "&cFailed to send Discord webhook.");
+                    BetterStaffChatSpigot.getInstance().logPrefix("&cFailed to send Discord webhook.");
                 }
             }
             else if (BetterStaffChatSpigot.getInstance().getConfig().getBoolean("discord.bot.enabled")) {
                 if (BetterStaffChatSpigot.getInstance().getConfig().getBoolean("discord.discord-messages.embed.enabled")) {
                     for (String guildChannelPair : BetterStaffChatSpigot.getInstance().getConfig().getStringList("discord.bot.channels")) {
                         String[] parts = guildChannelPair.split(": ");
-                        ((JDAImplementation) BetterStaffChatSpigot.getInstance().getJda()).sendEmbed(parts[0], parts[1], generateEmbed(sender, finalString));
+                        BetterStaffChatSpigot.getInstance().getJda().sendEmbed(parts[0], parts[1], generateEmbed(sender, finalString));
                     }
                 } else {
                     for (String guildChannelPair : BetterStaffChatSpigot.getInstance().getConfig().getStringList("discord.bot.channels")) {
                         String[] parts = guildChannelPair.split(": ");
-                        ((JDAImplementation) BetterStaffChatSpigot.getInstance().getJda()).sendMessage(parts[0], parts[1], finalString);
+                        BetterStaffChatSpigot.getInstance().getJda().sendMessage(parts[0], parts[1], finalString);
                     }
                 }
             }

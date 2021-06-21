@@ -20,9 +20,7 @@ package dev.austech.betterstaffchat.bungeecord.util;
 
 import dev.austech.betterstaffchat.bungeecord.BetterStaffChatBungeeCord;
 import dev.austech.betterstaffchat.common.discord.DiscordWebhook;
-import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.AbstractStaffChatUtil;
-import dev.austech.betterstaffchat.common.util.LogUtil;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
@@ -103,18 +101,18 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
                     webhook.execute();
                 } catch (IOException exception) {
                     exception.printStackTrace();
-                    LogUtil.logPrefix(BetterStaffChatBungeeCord.getInstance(), "&cFailed to send Discord webhook.");
+                    BetterStaffChatBungeeCord.getInstance().logPrefix("&cFailed to send Discord webhook.");
                 }
             } else if (BetterStaffChatBungeeCord.getInstance().getConfig().getBoolean("discord.bot.enabled")) {
                 if (BetterStaffChatBungeeCord.getInstance().getConfig().getBoolean("discord.discord-messages.embed.enabled")) {
                     for (String guildChannelPair : BetterStaffChatBungeeCord.getInstance().getConfig().getStringList("discord.bot.channels")) {
                         String[] parts = guildChannelPair.split(": ");
-                        ((JDAImplementation) BetterStaffChatBungeeCord.getInstance().getJda()).sendEmbed(parts[0], parts[1], generateEmbed(sender, finalString));
+                        BetterStaffChatBungeeCord.getInstance().getJda().sendEmbed(parts[0], parts[1], generateEmbed(sender, finalString));
                     }
                 } else {
                     for (String guildChannelPair : BetterStaffChatBungeeCord.getInstance().getConfig().getStringList("discord.bot.channels")) {
                         String[] parts = guildChannelPair.split(": ");
-                        ((JDAImplementation) BetterStaffChatBungeeCord.getInstance().getJda()).sendMessage(parts[0], parts[1], finalString);
+                        BetterStaffChatBungeeCord.getInstance().getJda().sendMessage(parts[0], parts[1], finalString);
                     }
                 }
             }
