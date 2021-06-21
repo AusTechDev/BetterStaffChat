@@ -28,6 +28,14 @@ import java.util.Scanner;
 
 @UtilityClass
 public class UpdateChecker {
+    /**
+     * Checks whether or not the plugin needs an update.
+     *
+     * @param plugin         the plugin object to use for logging
+     * @param currentVersion the current version of the plugin
+     * @return if the plugin needs an update
+     * @see <a href="https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates/">SpigotMC - Creating an update checker that checks for updates</a>
+     */
     public boolean needsUpdate(BetterStaffChatPlugin plugin, String currentVersion) {
         if (currentVersion.contains("dev")) return false;
 

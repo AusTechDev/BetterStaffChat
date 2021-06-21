@@ -21,13 +21,44 @@ package dev.austech.betterstaffchat.common.util;
 import dev.austech.betterstaffchat.common.discord.DiscordWebhook;
 
 public abstract class AbstractStaffChatUtil {
+    /**
+     * Gets a formatted message, that has placeholders replaced and colour codes <code>(&)</code> replaced.
+     *
+     * @param sender  the sender
+     * @param message the original message
+     * @return a formatted message
+     */
     public abstract String getFormattedMessage(Object sender, String message);
 
+    /**
+     * Alternative to Bukkit's broadcast method with bungeecord support and console logging.
+     *
+     * @param string     the message to broadcast
+     * @param permission the required permission node to view the message
+     */
     public abstract void broadcast(String string, String permission);
 
+    /**
+     * Sends a message to Discord via a Discord bot or a {@link DiscordWebhook}.
+     *
+     * @param sender the sender
+     * @param string the message to send
+     */
     public abstract void discord(Object sender, String string);
 
+    /**
+     * Method to handle a received GuildMessageCreateEvent from Discord.
+     *
+     * @param event the event to handle
+     */
     public abstract void handleDiscord(Object event);
 
+    /**
+     * Generates an embed with placeholders replaced
+     *
+     * @param sender the sender
+     * @param string the message
+     * @return an {@link dev.austech.betterstaffchat.common.discord.DiscordWebhook.EmbedObject}
+     */
     protected abstract DiscordWebhook.EmbedObject generateEmbed(Object sender, String string);
 }

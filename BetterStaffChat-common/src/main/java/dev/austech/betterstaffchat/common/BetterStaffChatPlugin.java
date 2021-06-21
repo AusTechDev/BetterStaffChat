@@ -21,9 +21,32 @@ package dev.austech.betterstaffchat.common;
 import java.io.File;
 
 public interface BetterStaffChatPlugin {
+    /**
+     * Used to get a plugin's <code>plugins/{name}</code> folder.
+     *
+     * @return the plugin's data folder
+     */
     File getPluginDataFolder();
+
+    /**
+     * Logs a message with a prefix.
+     *
+     * @param string the message to log
+     */
     void logPrefix(String string);
+
+    /**
+     * Logs a message with a prefix if <code>debug</code> is set to <code>true</code> in the console
+     *
+     * @param string the message to log
+     */
     void logPrefixDebug(String string);
+
+    /**
+     * Logs a message.
+     *
+     * @param string the message to log
+     */
     void log(String string);
 
 }

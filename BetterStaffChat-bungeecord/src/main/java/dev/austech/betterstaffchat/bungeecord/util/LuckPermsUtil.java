@@ -30,15 +30,27 @@ public class LuckPermsUtil {
     @Setter
     private LuckPerms luckPerms;
 
+    /**
+     * Gets a player's LuckPerms prefix.
+     *
+     * @param player the player to get the prefix
+     * @return the prefix
+     */
     public String getPrefix(ProxiedPlayer player) {
         User lpUser = luckPerms.getUserManager().getUser(player.getUniqueId());
-        if(lpUser.getCachedData().getMetaData().getPrefix() == null) return "";
+        if (lpUser.getCachedData().getMetaData().getPrefix() == null) return "";
         return TextUtil.colorize(lpUser.getCachedData().getMetaData().getPrefix());
     }
 
+    /**
+     * Gets a player's LuckPerms suffix.
+     *
+     * @param player the player to get the suffix
+     * @return the suffix
+     */
     public String getSuffix(ProxiedPlayer player) {
         User lpUser = luckPerms.getUserManager().getUser(player.getUniqueId());
-        if(lpUser.getCachedData().getMetaData().getSuffix() == null) return "";
+        if (lpUser.getCachedData().getMetaData().getSuffix() == null) return "";
         return TextUtil.colorize(lpUser.getCachedData().getMetaData().getSuffix());
     }
 }

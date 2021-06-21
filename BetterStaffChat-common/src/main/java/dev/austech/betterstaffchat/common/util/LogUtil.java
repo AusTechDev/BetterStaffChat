@@ -21,9 +21,7 @@ package dev.austech.betterstaffchat.common.util;
 import dev.austech.betterstaffchat.common.BetterStaffChatPlugin;
 import lombok.experimental.UtilityClass;
 
-import java.lang.reflect.InvocationTargetException;
-
-@UtilityClass
+@UtilityClass @Deprecated
 public class LogUtil {
     public void log(BetterStaffChatPlugin plugin, String string) {
         plugin.log(string);
