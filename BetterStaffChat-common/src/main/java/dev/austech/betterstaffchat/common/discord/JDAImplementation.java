@@ -24,8 +24,12 @@ import net.dv8tion.jda.api.JDA;
 
 import java.util.logging.Logger;
 
-// We suppress this, because if the
-// channel or guild is null, we don't care.
+/* We suppress this, because if the
+   channel or guild is null, we don't care.
+
+   An error to the client is fine, as they
+   can read it and see what is wrong.
+ */
 @SuppressWarnings({ "ConstantConditions" })
 public class JDAImplementation {
     private final JDA jda;

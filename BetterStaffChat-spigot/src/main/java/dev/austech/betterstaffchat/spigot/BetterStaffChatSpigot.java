@@ -94,7 +94,7 @@ public final class BetterStaffChatSpigot extends JavaPlugin implements BetterSta
             if (!dependencyEngine.getErrors().isEmpty()) {
                 Optional<Throwable> opt = dependencyEngine.getErrors().stream().filter(throwable -> throwable.getMessage().contains("Unable to make protected void java.net.URLClassLoader.addURL(java.net.URL) accessible: module java.base does not")).findFirst();
                 if (opt.isPresent()) {
-                    getLogger().log(Level.SEVERE, "An error occurred whilst starting BetterStaffChat - This is due to Java 16 being unsupported.");
+                    getLogger().log(Level.SEVERE, "An error occurred whilst starting BetterStaffChat - This is due to Java 16 and up being incompatible by default.");
                     getLogger().log(Level.SEVERE, "This error is fixable, please add the following flags to your startup after the \"java\":");
                     getLogger().log(Level.SEVERE, "");
                     getLogger().log(Level.SEVERE, "--add-opens java.base/java.net=ALL-UNNAMED");

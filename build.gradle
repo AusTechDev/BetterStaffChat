@@ -32,7 +32,7 @@ plugins {
 }
 
 group = 'dev.austech'
-version = '1.1.0'
+version = '1.1.1-SNAPSHOT'
 
 // https://github.com/EssentialsX/Essentials/blob/2.x/build.gradle
 @SuppressWarnings('GrMethodMayBeStatic')
