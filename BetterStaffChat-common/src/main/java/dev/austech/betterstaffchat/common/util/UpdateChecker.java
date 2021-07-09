@@ -18,7 +18,7 @@
 
 package dev.austech.betterstaffchat.common.util;
 
-import dev.austech.betterstaffchat.common.BetterStaffChatPlugin;
+import dev.austech.betterstaffchat.common.plugin.BetterStaffChatPlugin;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;

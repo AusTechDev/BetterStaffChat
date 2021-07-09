@@ -19,7 +19,6 @@
 package dev.austech.betterstaffchat.spigot.command;
 
 import com.google.common.collect.Lists;
-import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import dev.austech.betterstaffchat.spigot.BetterStaffChatSpigot;
 import net.dv8tion.jda.api.entities.Activity;
@@ -36,10 +35,10 @@ public class BetterStaffChatCommand extends Command {
         if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.hasPermission("betterstaffchat.reload")) {
             boolean reload = BetterStaffChatSpigot.getInstance().reloadConfig(sender);
             if (!reload && BetterStaffChatSpigot.getInstance().getConfig().getBoolean("discord.bot.enabled")) {
-                ((JDAImplementation) BetterStaffChatSpigot.getInstance().getJda()).asJda().getPresence().setActivity(Activity.of(
+                BetterStaffChatSpigot.getInstance().getJda().asJda().getPresence().setActivity(Activity.of(
                         Activity.ActivityType.valueOf(BetterStaffChatSpigot.getInstance().getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
                         BetterStaffChatSpigot.getInstance().getConfig().getString("discord.bot.activity")
-                ));;
+                ));
             }
 
             sender.sendMessage(TextUtil.colorize("&8&l&m-------------------------------"));

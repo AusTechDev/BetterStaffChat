@@ -37,7 +37,7 @@ public class ToggleStaffChatCommand extends Command {
             return;
         }
 
-        if (sender instanceof ProxiedPlayer && BetterStaffChatBungeeCord.getInstance().getIgnoreStaffChat().contains(((ProxiedPlayer) sender).getUniqueId())) {
+        if (BetterStaffChatBungeeCord.getInstance().getIgnoreStaffChat().contains(((ProxiedPlayer) sender).getUniqueId())) {
             sender.sendMessage(TextUtil.colorizeToComponent("&cYour staff chat is currently disabled."));
             return;
         }

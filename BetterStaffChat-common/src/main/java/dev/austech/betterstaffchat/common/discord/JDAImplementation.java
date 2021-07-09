@@ -19,19 +19,18 @@
 package dev.austech.betterstaffchat.common.discord;
 
 import dev.austech.betterstaffchat.common.util.AbstractStaffChatUtil;
-import lombok.AccessLevel;
-import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 
 import java.util.logging.Logger;
 
+// We suppress this, because if the
+// channel or guild is null, we don't care.
+@SuppressWarnings({ "ConstantConditions" })
 public class JDAImplementation {
     private final JDA jda;
-    @Getter(AccessLevel.PROTECTED) private final AbstractStaffChatUtil staffChatUtil;
 
     public JDAImplementation(JDA jda, AbstractStaffChatUtil staffChatUtil) {
-        this.staffChatUtil = staffChatUtil;
         this.jda = jda;
 
         jda.addEventListener(new MessageListener(staffChatUtil));

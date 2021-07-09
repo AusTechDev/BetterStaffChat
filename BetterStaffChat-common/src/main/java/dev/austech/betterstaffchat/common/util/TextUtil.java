@@ -18,6 +18,7 @@
 
 package dev.austech.betterstaffchat.common.util;
 
+import dev.austech.betterstaffchat.common.plugin.Platform;
 import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -27,17 +28,15 @@ import java.util.regex.Pattern;
 
 @UtilityClass
 public final class TextUtil {
-    private String serverVersion = "";
+    private boolean rgbAvailable;
+    private Platform platform;
 
-    public void init(boolean spigot, Object plugin) {
-        if (!spigot) {
-            serverVersion = "new enough";
-        } else {
-            try {
-                serverVersion = (String) plugin.getClass().getMethod("getVersion").invoke(plugin);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
+    public void init(Platform serverPlatform, Object plugin) {
+        platform = serverPlatform;
+        if (serverPlatform.equals(Platform.BUKKIT)) {
+            String packageName = plugin.getClass().getPackage().getName();
+            if (Integer.parseInt(packageName.substring(packageName.lastIndexOf('.') + 1).split("_")[1]) >= 16)
+                rgbAvailable = true;
         }
     }
 
@@ -47,10 +46,7 @@ public final class TextUtil {
      * @return Colored string
      */
     public String colorize(String string) {
-        if (serverVersion.isEmpty()) {
-            throw new IllegalArgumentException("Server version has not been set.");
-        }
-        if (serverVersion.equals("new enough") || serverVersion.contains("1.16") || serverVersion.contains("1.17"))
+        if (platform.equals(Platform.BUNGEECORD) || rgbAvailable)
             return ChatColor.translateAlternateColorCodes('&', colorizeRgb(string));
         else return ChatColor.translateAlternateColorCodes('&', string);
     }

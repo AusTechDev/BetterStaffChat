@@ -19,7 +19,6 @@
 package dev.austech.betterstaffchat.bungeecord.command;
 
 import dev.austech.betterstaffchat.bungeecord.BetterStaffChatBungeeCord;
-import dev.austech.betterstaffchat.common.discord.JDAImplementation;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import net.dv8tion.jda.api.entities.Activity;
 import net.md_5.bungee.api.CommandSender;
@@ -35,10 +34,10 @@ public class BetterStaffChatCommand extends Command {
         if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.hasPermission("betterstaffchat.reload")) {
             boolean reload = BetterStaffChatBungeeCord.getInstance().reloadConfig(sender);
             if (!reload && BetterStaffChatBungeeCord.getInstance().getConfig().getBoolean("discord.bot.enabled")) {
-                ((JDAImplementation) BetterStaffChatBungeeCord.getInstance().getJda()).asJda().getPresence().setActivity(Activity.of(
+                BetterStaffChatBungeeCord.getInstance().getJda().asJda().getPresence().setActivity(Activity.of(
                         Activity.ActivityType.valueOf(BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
                         BetterStaffChatBungeeCord.getInstance().getConfig().getString("discord.bot.activity")
-                ));;
+                ));
             }
 
             sender.sendMessage(TextUtil.colorizeToComponent("&8&l&m-------------------------------"));

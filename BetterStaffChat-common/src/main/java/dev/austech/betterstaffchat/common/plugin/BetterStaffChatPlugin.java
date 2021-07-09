@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package dev.austech.betterstaffchat.common;
+package dev.austech.betterstaffchat.common.plugin;
 
 import java.io.File;
 
@@ -49,4 +49,10 @@ public interface BetterStaffChatPlugin {
      */
     void log(String string);
 
+    /**
+     * Gets a server's "platform".
+     *
+     * @return the platform of the server
+     */
+    Platform getPlatform();
 }

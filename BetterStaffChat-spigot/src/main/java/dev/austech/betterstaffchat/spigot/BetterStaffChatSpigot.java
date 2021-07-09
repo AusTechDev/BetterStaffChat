@@ -19,10 +19,11 @@
 package dev.austech.betterstaffchat.spigot;
 
 import com.google.common.collect.Lists;
-import dev.austech.betterstaffchat.common.BetterStaffChatPlugin;
+import dev.austech.betterstaffchat.common.plugin.BetterStaffChatPlugin;
 import dev.austech.betterstaffchat.common.dependency.BetterStaffChatDependencyProvider;
 import dev.austech.betterstaffchat.common.dependency.DependencyEngine;
 import dev.austech.betterstaffchat.common.discord.JDAImplementation;
+import dev.austech.betterstaffchat.common.plugin.Platform;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import dev.austech.betterstaffchat.common.util.UpdateChecker;
 import dev.austech.betterstaffchat.spigot.command.BetterStaffChatCommand;
@@ -53,7 +54,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public final class BetterStaffChatSpigot extends JavaPlugin implements BetterStaffChatPlugin {
-
     @Getter private static BetterStaffChatSpigot instance;
     @Getter private final ArrayList<UUID> ignoreStaffChat = Lists.newArrayList();
     @Getter private final ArrayList<UUID> toggledStaffChat = Lists.newArrayList();
@@ -65,7 +65,7 @@ public final class BetterStaffChatSpigot extends JavaPlugin implements BetterSta
     public void onEnable() {
         instance = this;
 
-        TextUtil.init(true, this);
+        TextUtil.init(getPlatform(), this);
         Config.load();
 
         if (getConfig().getBoolean("check-for-updates"))
@@ -98,21 +98,19 @@ public final class BetterStaffChatSpigot extends JavaPlugin implements BetterSta
                     getLogger().log(Level.SEVERE, "This error is fixable, please add the following flags to your startup after the \"java\":");
                     getLogger().log(Level.SEVERE, "");
                     getLogger().log(Level.SEVERE, "--add-opens java.base/java.net=ALL-UNNAMED");
-                    this.getPluginLoader().disablePlugin(this);
-                    return;
                 } else {
                     dependencyEngine.getErrors().forEach(Throwable::printStackTrace);
                     getLogger().log(Level.SEVERE, "Errors occurred whilst loading BSC.");
-                    this.getPluginLoader().disablePlugin(this);
-                    return;
                 }
+                this.getPluginLoader().disablePlugin(this);
+                return;
             }
 
             if (discordEnabled) {
                 Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
                     try {
                         this.jda = new JDAImplementation(JDABuilder.createLight(getConfig().getString("discord.bot.token")).build(), StaffChatUtil.getInstance());
-                        ((JDAImplementation) jda).asJda().getPresence().setActivity(Activity.of(
+                        jda.asJda().getPresence().setActivity(Activity.of(
                                 Activity.ActivityType.valueOf(getConfig().getString("discord.bot.activity-type").toUpperCase().replace("PLAYING", "DEFAULT")),
                                 getConfig().getString("discord.bot.activity")
                         ));
@@ -163,6 +161,10 @@ public final class BetterStaffChatSpigot extends JavaPlugin implements BetterSta
         Bukkit.getConsoleSender().sendMessage(TextUtil.colorize(string));
     }
 
+    @Override public Platform getPlatform() {
+        return Platform.BUKKIT;
+    }
+
     public void logPrefix(String string) {
         Bukkit.getConsoleSender().sendMessage("[BetterStaffChat] " + TextUtil.colorize(string));
     }
@@ -170,10 +172,6 @@ public final class BetterStaffChatSpigot extends JavaPlugin implements BetterSta
     public void logPrefixDebug(String string) {
         if (getConfig().getBoolean("debug"))
             Bukkit.getConsoleSender().sendMessage("[BetterStaffChat] Debug - " + TextUtil.colorize(string));
-    }
-
-    public String getVersion() {
-        return Bukkit.getVersion();
     }
 
     @Override
