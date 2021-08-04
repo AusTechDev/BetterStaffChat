@@ -4,13 +4,17 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '8', '11', '16' ] # All LTS versions
+    name: Java ${{ matrix.java }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK & Gradle
         uses: actions/setup-java@v2
         with:
-          java-version: 8
-          distribution: zulu
+          java-version: ${{ matrix.java }}
+          distribution: adopt
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:
@@ -33,6 +37,6 @@ jobs:
           result-encoding: string
       - uses: actions/upload-artifact@v2
         with:
-          name: Artifacts-${{ steps.get-id.outputs.result }}
+          name: Artifacts-${{ steps.get-id.outputs.result }}-J${{ matrix.java }}
           path: |
             jars/*.jar
