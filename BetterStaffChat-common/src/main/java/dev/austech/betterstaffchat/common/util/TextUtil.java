@@ -69,7 +69,7 @@ public final class TextUtil {
     }
 
     public TextComponent colorizeToComponent(String string) {
-        return new TextComponent(colorize(string));
+        return new TextComponent(TextComponent.fromLegacyText(string));
     }
 
     public String spacer(int amount) {

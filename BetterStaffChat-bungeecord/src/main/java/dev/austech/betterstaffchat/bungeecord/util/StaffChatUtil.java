@@ -24,7 +24,6 @@ import dev.austech.betterstaffchat.common.util.AbstractStaffChatUtil;
 import dev.austech.betterstaffchat.common.util.TextUtil;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.awt.*;
@@ -70,7 +69,7 @@ public class StaffChatUtil extends AbstractStaffChatUtil {
     public void broadcast(String string, String permission) {
         for (ProxiedPlayer player : BetterStaffChatBungeeCord.getInstance().getProxy().getPlayers()) {
             if (!BetterStaffChatBungeeCord.getInstance().getIgnoreStaffChat().contains(player.getUniqueId()) && player.hasPermission(permission)) {
-                player.sendMessage(new TextComponent(string));
+                player.sendMessage(TextUtil.colorizeToComponent(string));
             }
         }
 
