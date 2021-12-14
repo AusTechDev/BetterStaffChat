@@ -83,7 +83,10 @@ public class PlayerListener implements Listener {
 
                 // if (event.getPlayer().getServer() == null) return;
 
-                int tries = 0;
+
+                int timeDelay = 100;
+                if (BetterStaffChatBungeeCord.getInstance().getConfig().get("join-delay")) timeDelay = BetterStaffChatBungeeCord.getInstance().getConfig().getInt("join-delay");
+                
                 ScheduledTask task = BetterStaffChatBungeeCord.getInstance().getProxy().getScheduler().schedule(BetterStaffChatBungeeCord.getInstance(), () -> {
 
                     String message = TextUtil.colorize(
@@ -103,7 +106,7 @@ public class PlayerListener implements Listener {
                             .replace("%player_name%", event.getPlayer().getName())
                             .replace("%server%", StaffChatUtil.getFormattedServerName(event.getPlayer().getServer().getInfo().getName())))));
                 }, 100, TimeUnit.MILLISECONDS);
-            }, 1, TimeUnit.SECONDS);
+            }, timeDelay, TimeUnit.SECONDS);
         }
     }
 
