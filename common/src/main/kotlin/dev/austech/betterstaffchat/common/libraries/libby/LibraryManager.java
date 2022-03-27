@@ -357,7 +357,7 @@ public abstract class LibraryManager {
 
                 if (md != null) {
                     byte[] checksum = md.digest(bytes);
-                    if (!Arrays.equals(checksum, library.getChecksum())) {
+                    if (!MessageDigest.isEqual(checksum, library.getChecksum())) {
                         logger.warn("*** INVALID CHECKSUM ***");
                         logger.warn(" Library :  " + library);
                         logger.warn(" URL :  " + url);

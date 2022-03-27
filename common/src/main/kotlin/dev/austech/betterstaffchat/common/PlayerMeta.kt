@@ -5,4 +5,4 @@ import java.util.UUID
 class PlayerMeta(
     val prefix: String?,
     val suffix: String?
-) {}
+)
