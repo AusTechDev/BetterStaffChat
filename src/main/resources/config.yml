@@ -76,7 +76,6 @@ staffchat:
   toggle-on: "&8[&dS&8] &7All your messages will &anow&7 go to staffchat."
 
 discord:
-
   # If you need help, we're here to assist you at https://austech.dev/to/support
 
   # Don't enable if webhook is enabled below
@@ -98,7 +97,6 @@ discord:
     channels:
       - "N/A: N/A"
 
-
   # Don't enable if bot is enabled above
   webhook:
     enabled: false
@@ -107,7 +105,6 @@ discord:
     url: ""
 
   discord-messages:
-
     # The format in game, for when someone sends a message in Discord
     # Available placeholders: %username%, %discriminator% - The 4 numbers in the username
     # %nickname% - The nickname on Discord
