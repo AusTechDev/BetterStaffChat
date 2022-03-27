@@ -1,0 +1,3 @@
+name: BetterStaffChat
+main: dev.austech.betterstaffchat.spigot.BSCSpigot
+version: ${version}

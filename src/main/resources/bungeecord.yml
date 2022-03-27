@@ -1,0 +1,3 @@
+name:name: BetterStaffChat
+main: dev.austech.betterstaffchat.bungeecord.BSCBungee
+version: ${version}
