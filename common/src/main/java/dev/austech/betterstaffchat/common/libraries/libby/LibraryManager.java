@@ -1,6 +1,5 @@
 package dev.austech.betterstaffchat.common.libraries.libby;
 
-import dev.austech.betterstaffchat.common.libraries.libby.Repositories;
 import dev.austech.betterstaffchat.common.libraries.libby.classloader.IsolatedClassLoader;
 import dev.austech.betterstaffchat.common.libraries.libby.logging.LogLevel;
 import dev.austech.betterstaffchat.common.libraries.libby.logging.Logger;
@@ -23,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;

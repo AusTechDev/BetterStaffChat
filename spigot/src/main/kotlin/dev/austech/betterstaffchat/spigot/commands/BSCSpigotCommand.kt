@@ -1,6 +1,7 @@
 package dev.austech.betterstaffchat.spigot.commands
 
 import dev.austech.betterstaffchat.spigot.BSCSpigot
+import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -41,6 +42,10 @@ abstract class BSCSpigotCommand(name: String, description: String, usage: String
             return false
         }
         return true
+    }
+
+    fun tell(component: Component) {
+        plugin.audience.sender(this.sender).sendMessage(component)
     }
 
     fun legacyTell(s: String) {

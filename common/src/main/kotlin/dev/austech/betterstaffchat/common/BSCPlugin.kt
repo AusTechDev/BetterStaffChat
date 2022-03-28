@@ -10,6 +10,9 @@ interface BSCPlugin {
     val config: Yaml
     val consoleAudience: Audience
 
+    fun onLoad()
+    fun onEnable()
+
     enum class Platform {
         BUKKIT,
         BUNGEECORD

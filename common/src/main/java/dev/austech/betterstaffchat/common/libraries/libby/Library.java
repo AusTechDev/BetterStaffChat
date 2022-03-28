@@ -1,7 +1,5 @@
 package dev.austech.betterstaffchat.common.libraries.libby;
 
-import dev.austech.betterstaffchat.common.libraries.libby.LibraryManager;
-import dev.austech.betterstaffchat.common.libraries.libby.Repositories;
 import dev.austech.betterstaffchat.common.libraries.libby.relocation.Relocation;
 
 import java.util.Base64;

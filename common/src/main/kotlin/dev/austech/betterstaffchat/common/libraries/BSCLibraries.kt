@@ -113,8 +113,6 @@ object BSCLibraries {
                 .plus(Adventure.SERIALIZER_BUNGEECORD)
         }
 
-        println("Libraries: ${libraryList.joinToString { it.artifactId.toString() }}")
-
         return libraryList
     }
 }

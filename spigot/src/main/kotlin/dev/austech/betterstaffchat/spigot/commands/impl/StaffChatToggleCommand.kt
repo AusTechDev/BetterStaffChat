@@ -11,6 +11,11 @@ class StaffChatToggleCommand(name: String, description: String, usage: String, a
             return true
         }
 
+        if (!plugin.config.getBoolean(Config.Paths.STAFFCHAT.TOGGLE_ENABLED.toString())) {
+            errorTell("Staffchat toggle is not enabled.")
+            return true
+        }
+
         if (!sender.requirePlayer()) {
             return true
         }
@@ -53,10 +58,10 @@ class StaffChatToggleCommand(name: String, description: String, usage: String, a
             }
 
             plugin.dataWrapper.addToggledPlayer(sender.uniqueId)
-            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT_TOGGLE_ON_MESSAGE.toString()))
+            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT.TOGGLE_MESSAGE_ON.toString()))
         } else {
             plugin.dataWrapper.removeToggledPlayer(sender.uniqueId)
-            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT_TOGGLE_OFF_MESSAGE.toString()))
+            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT.TOGGLE_MESSAGE_OFF.toString()))
         }
 
         return true

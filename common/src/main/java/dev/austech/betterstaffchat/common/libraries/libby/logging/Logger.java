@@ -1,6 +1,5 @@
 package dev.austech.betterstaffchat.common.libraries.libby.logging;
 
-import dev.austech.betterstaffchat.common.libraries.libby.logging.LogLevel;
 import dev.austech.betterstaffchat.common.libraries.libby.logging.adapters.LogAdapter;
 
 import static java.util.Objects.requireNonNull;

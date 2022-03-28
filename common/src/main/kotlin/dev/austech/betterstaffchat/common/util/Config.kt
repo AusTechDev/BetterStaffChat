@@ -32,35 +32,59 @@ class Config(private val plugin: BSCPlugin) {
             .createConfig();
     }
 
-    enum class Paths(private val path: String) {
-        STAFFCHAT_FORMAT("staffchat.format"),
-        STAFFCHAT_PREFIX("staffchat.prefix"),
-        STAFFCHAT_CONSOLE("staffchat.console-replacement"),
-        STAFFCHAT_CONSOLE_UUID("staffchat.console-uuid-replacement"),
-        STAFFCHAT_CONSOLE_SERVER("staffchat.console-server-replacement"),
-        STAFFCHAT_CONSOLE_LOG("staffchat.log-to-console"),
-        STAFFCHAT_STRIP_COLOR_CODES("staffchat.strip-color-codes"),
-        STAFFCHAT_SERVER_REPLACEMENTS("staffchat.server-replacement"),
-        STAFFCHAT_JOIN_MESSAGE("staffchat.join"),
-        STAFFCHAT_LEAVE_MESSAGE("staffchat.leave"),
-        STAFFCHAT_SWITCH_MESSAGE("staffchat.switch"),
-        STAFFCHAT_MUTE_ON_MESSAGE("staffchat.mute-on"),
-        STAFFCHAT_MUTE_OFF_MESSAGE("staffchat.mute-off"),
-        STAFFCHAT_TOGGLE_ON_MESSAGE("staffchat.toggle-on"),
-        STAFFCHAT_TOGGLE_OFF_MESSAGE("staffchat.toggle-off"),
+    class Paths {
+        enum class STAFFCHAT(private val path: String) {
+            FORMAT("staffchat.format"),
+            PREFIX("staffchat.prefix"),
+            CONSOLE_NAME("staffchat.console-replacement"),
+            CONSOLE_UUID("staffchat.console-uuid-replacement"),
+            CONSOLE_SERVER("staffchat.console-server-replacement"),
+            CONSOLE_LOG("staffchat.log-to-console"),
+            STRIP_COLOR_CODES("staffchat.strip-color-codes"),
+            SERVER_REPLACEMENTS("staffchat.server-replacement"),
+            DISABLED_SERVERS("staffchat.disabled-servers"),
 
-        COMMAND_STAFFCHAT_COMMAND("commands.staffchat.command"),
-        COMMAND_STAFFCHAT_ALIASES("commands.staffchat.aliases"),
-        COMMAND_MUTE_COMMAND("commands.mutestaffchat.command"),
-        COMMAND_MUTE_ALIASES("commands.mutestaffchat.aliases"),
-        COMMAND_TOGGLE_COMMAND("commands.togglestaffchat.command"),
-        COMMAND_TOGGLE_ALIASES("commands.togglestaffchat.aliases"),
+            EVENTS_JOIN_ENABLED("staffchat.events.join.enabled"),
+            EVENTS_JOIN_SEE_OWN("staffchat.events.join.see-own-join"),
+            EVENTS_JOIN_MESSAGE("staffchat.events.join.message"),
+            EVENTS_LEAVE_ENABLED("staffchat.events.leave.enabled"),
+            EVENTS_LEAVE_MESSAGE("staffchat.events.leave.message"),
+            EVENTS_SWITCH_ENABLED("staffchat.events.switch.enabled"),
+            EVENTS_SWITCH_USE_WORLDS("staffchat.events.switch.use-worlds-on-spigot"),
+            EVENTS_SWITCH_MESSAGE("staffchat.events.switch.message"),
 
-        GLOBAL_UPDATE_CHECK("check-for-updates"),
-        GLOBAL_DEBUG_MODE("debug");
+            MUTE_ENABLED("staffchat.mute.enabled"),
+            MUTE_MESSAGE_ON("staffchat.mute.on"),
+            MUTE_MESSAGE_OFF("staffchat.mute.off"),
+            TOGGLE_ENABLED("staffchat.toggle.enabled"),
+            TOGGLE_MESSAGE_ON("staffchat.toggle.on"),
+            TOGGLE_MESSAGE_OFF("staffchat.toggle.off");
 
-        override fun toString(): String {
-            return path;
+            override fun toString(): String {
+                return path
+            }
+        }
+
+        enum class COMMAND(private val path: String) {
+            STAFFCHAT_COMMAND("commands.staffchat.command"),
+            STAFFCHAT_ALIASES("commands.staffchat.aliases"),
+            MUTE_COMMAND("commands.mutestaffchat.command"),
+            MUTE_ALIASES("commands.mutestaffchat.aliases"),
+            TOGGLE_COMMAND("commands.togglestaffchat.command"),
+            TOGGLE_ALIASES("commands.togglestaffchat.aliases");
+
+            override fun toString(): String {
+                return path
+            }
+        }
+
+        enum class HOOKS(private val path: String) {
+            LUCKPERMS("hooks.luckperms"),
+            PLACEHOLDERAPI("hooks.placeholderapi");
+
+            override fun toString(): String {
+                return path
+            }
         }
     }
 }

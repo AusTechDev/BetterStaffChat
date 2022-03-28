@@ -1,6 +1,6 @@
 package dev.austech.betterstaffchat.spigot.commands.impl
 
-import dev.austech.betterstaffchat.common.PlayerMeta
+import dev.austech.betterstaffchat.common.BSCMetadata
 import dev.austech.betterstaffchat.spigot.commands.BSCSpigotCommand
 import dev.austech.betterstaffchat.spigot.util.PlayerUtil
 import org.bukkit.command.CommandSender
@@ -22,7 +22,17 @@ class StaffChatCommand(name: String, description: String, usage: String, aliases
             return true
         }
 
-        plugin.staffChatUtil.sendMessage(PlayerUtil.getReceiveAudience(), args.joinToString(separator = " "), PlayerUtil.getSenderName(sender), "N/A", PlayerMeta(null, null))
+        plugin.staffChatUtil.sendMessage(PlayerUtil.getReceiveAudience(), args.joinToString(separator = " "),
+            BSCMetadata(
+                BSCMetadata.Player(
+                    (if (sender is Player) sender.uniqueId else null),
+                    PlayerUtil.getSenderName(sender)
+                ),
+                BSCMetadata.Spigot(
+                    if (sender is Player) sender.world.name else null,
+                )
+            )
+        )
 
         return true;
     }

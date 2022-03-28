@@ -10,13 +10,15 @@ import dev.austech.betterstaffchat.common.util.StaffChatUtil
 import dev.austech.betterstaffchat.spigot.commands.CommandManager
 import dev.austech.betterstaffchat.spigot.listeners.PlayerListener
 import dev.austech.betterstaffchat.spigot.libby.BukkitLibraryManager
+import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import java.util.*
 
-class BSCSpigot: JavaPlugin(), BSCPlugin {
+class BSCSpigot(private val plugin: JavaPlugin) : BSCPlugin {
     companion object {
         lateinit var instance: BSCSpigot
     }
@@ -28,10 +30,10 @@ class BSCSpigot: JavaPlugin(), BSCPlugin {
     override lateinit var config: Yaml
     override lateinit var consoleAudience: Audience;
     override val platform = BSCPlugin.Platform.BUKKIT
-    override val pluginDataFile: File = this.dataFolder
+    override val pluginDataFile: File = plugin.dataFolder
 
     override fun onLoad() {
-        val libraryManager = BukkitLibraryManager(this)
+        val libraryManager = BukkitLibraryManager(plugin)
         libraryManager.addMavenCentral()
         libraryManager.addJitPack()
 
@@ -42,15 +44,25 @@ class BSCSpigot: JavaPlugin(), BSCPlugin {
 
     override fun onEnable() {
         instance = this;
-        audience = BukkitAudiences.create(this)
+        audience = BukkitAudiences.create(plugin)
         consoleAudience = audience.console()
         config = Config(this).load()
-        staffChatUtil = StaffChatUtil(this)
         data = Data(this).load()
         dataWrapper = Data.Wrapper(data)
 
+        val shouldHookPAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
+                config.getBoolean(Config.Paths.HOOKS.PLACEHOLDERAPI.toString())
+
+        staffChatUtil = if (shouldHookPAPI) {
+            StaffChatUtil(this) { uuid, s ->
+                PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(uuid), s)
+            }
+        } else {
+            StaffChatUtil(this)
+        }
+
         CommandManager(this).registerCommands()
 
-        Bukkit.getPluginManager().registerEvents(PlayerListener(), this)
+        Bukkit.getPluginManager().registerEvents(PlayerListener(), plugin)
     }
 }

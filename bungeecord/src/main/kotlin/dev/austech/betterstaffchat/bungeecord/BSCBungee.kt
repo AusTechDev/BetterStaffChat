@@ -12,16 +12,17 @@ import dev.austech.betterstaffchat.common.util.Data
 import dev.austech.betterstaffchat.common.util.StaffChatUtil
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences
+import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 
-class BSCBungee: Plugin(), BSCPlugin {
+class BSCBungee(private val plugin: Plugin): BSCPlugin {
     companion object {
         lateinit var instance: BSCBungee
     }
 
     override val platform: BSCPlugin.Platform = BSCPlugin.Platform.BUNGEECORD
-    override val pluginDataFile: File = dataFolder
+    override val pluginDataFile: File = plugin.dataFolder
     override lateinit var config: Yaml
     override lateinit var consoleAudience: Audience
     lateinit var staffChatUtil: StaffChatUtil
@@ -30,7 +31,7 @@ class BSCBungee: Plugin(), BSCPlugin {
     lateinit var dataWrapper: Data.Wrapper;
 
     override fun onLoad() {
-        val libraryManager = BungeeLibraryManager(this)
+        val libraryManager = BungeeLibraryManager(plugin)
         libraryManager.addMavenCentral()
         libraryManager.addJitPack()
 
@@ -41,15 +42,15 @@ class BSCBungee: Plugin(), BSCPlugin {
 
     override fun onEnable() {
         instance = this
-        audience = BungeeAudiences.create(this)
+        audience = BungeeAudiences.create(plugin)
         consoleAudience = audience.console()
         config = Config(this).load()
         staffChatUtil = StaffChatUtil(this)
         data = Data(this).load()
         dataWrapper = Data.Wrapper(data)
 
-        CommandManager(this).registerCommands()
+        CommandManager(this).registerCommands(plugin)
 
-        proxy.pluginManager.registerListener(this, PlayerListener())
+        ProxyServer.getInstance().pluginManager.registerListener(plugin, PlayerListener(plugin))
     }
 }

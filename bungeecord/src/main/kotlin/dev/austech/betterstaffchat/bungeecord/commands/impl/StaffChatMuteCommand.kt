@@ -1,18 +1,29 @@
 package dev.austech.betterstaffchat.bungeecord.commands.impl
 
 import dev.austech.betterstaffchat.bungeecord.commands.BSCBungeeCommand
+import dev.austech.betterstaffchat.bungeecord.util.PlayerUtil
 import dev.austech.betterstaffchat.common.util.Config
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.connection.ProxiedPlayer
 
 class StaffChatMuteCommand(name: String, aliases: List<String>): BSCBungeeCommand(name, "betterstaffchat.mutestaffchat", aliases) {
     override fun run(sender: CommandSender, args: Array<out String>) {
+        if (!plugin.config.getBoolean(Config.Paths.STAFFCHAT.MUTE_ENABLED.toString())) {
+            errorTell("Staffchat mute is not enabled.")
+            return
+        }
+
         if (sender.requirePlayer()) {
             return
         }
 
         if (sender !is ProxiedPlayer) {
             throw IllegalStateException("Sender is not a player!")
+        }
+
+        if (PlayerUtil.isDisabledServer(sender.server.info)) {
+            errorTell("You cannot use staffchat on this server.")
+            return;
         }
 
         val mute: Boolean
@@ -42,10 +53,10 @@ class StaffChatMuteCommand(name: String, aliases: List<String>): BSCBungeeComman
 
         if (mute) {
             plugin.dataWrapper.addMutedPlayer(sender.uniqueId)
-            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT_MUTE_ON_MESSAGE.toString()))
+            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT.MUTE_MESSAGE_ON.toString()))
         } else {
             plugin.dataWrapper.removeMutedPlayer(sender.uniqueId)
-            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT_MUTE_OFF_MESSAGE.toString()))
+            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT.MUTE_MESSAGE_OFF.toString()))
         }
 
         return

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    id("org.jetbrains.kotlin.jvm") version "1.4.31"
+    kotlin("jvm") version "1.6.10" apply false
     id("io.freefair.lombok") version "6.0.0-m2"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
@@ -18,6 +18,7 @@ repositories {
 dependencies {
     implementation(project(":common", "shadow"))
     implementation(project(":spigot", "shadow"))
+    implementation(project(":bungeecord", "shadow"))
 }
 
 tasks {
@@ -29,9 +30,9 @@ tasks {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "idea")
+    apply(plugin = "kotlin")
     apply(plugin = "com.github.johnrengelman.shadow")
     apply(plugin = "io.freefair.lombok")
-    apply(plugin = "org.jetbrains.kotlin.jvm")
 
     group = project.group
     version = project.version
@@ -47,7 +48,7 @@ subprojects {
     }
 
     dependencies {
-        implementation(kotlin("stdlib-jdk8"))
+        compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
         compileOnly("com.github.simplix-softworks:SimplixStorage:3.2.3")
         compileOnly("net.kyori:adventure-api:4.10.1")
         compileOnly("net.kyori:adventure-text-minimessage:4.10.1")
@@ -87,7 +88,7 @@ task<Copy>("copyJars") {
 }
 
 fun outputTasks(): List<Task?> {
-    return arrayOf("shadowJar", ":common:shadowJar", ":spigot:shadowJar").map {
+    return arrayOf("shadowJar", ":common:shadowJar", ":spigot:shadowJar", ":bungeecord:shadowJar").map {
         tasks.findByPath(it)
     }
 }

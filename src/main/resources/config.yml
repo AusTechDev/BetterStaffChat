@@ -1,4 +1,5 @@
 # BetterStaffChat
+# The better staffchat plugin.
 
 # Copyright (c) 2022 AusTech Development Team
 # Licensed under GNU General Public License v3
@@ -7,12 +8,38 @@
 # Spigot Profile: https://www.spigotmc.org/members/919057/
 # Discord Server: https://austech.dev/to/support
 
+# You can request a feature or make a suggestion at https://github.com/AusTechDev/BetterStaffChat/discussions/new?category=ideas-features
+
+# Message Placeholders in all messages (except specified otherwise):
+#   %player_name%        - The player's name
+#   %player_uuid%        - The player's UUID
+#   %player_server%      - The replaced name of the server the player is on (staffchat.server-replacement) (BungeeCord Only)
+#   %player_server_raw%  - The raw name of the server the player is on (BungeeCord Only)
+#   %player_world%      - The name of the world the player is in (Spigot Only)
+
+# Hook Placeholders:
+#   LuckPerms
+#     %luckperms_group%               - The player's group
+#     %luckperms_group_displayname%   - The player's group's display name
+#     %luckperms_prefix%              - The player's prefix
+#     %luckperms_suffix%              - The player's suffix
+#     %luckperms_meta_<key>%          - The player's LP metadata for the given key
+
+# Message Format:
+#   We use modern libraries to format messages.
+#   Every message can be configured with MiniMessage.
+#   https://docs.adventure.kyori.net/minimessage/format.html#standard-tags
+#
+#   Using legacy '&'-style formatting is not supported. It will throw an error.
+#   You can use this site to convert legacy formatting to MiniMessage:
+#   - https://tehbrian.xyz/legacy-to-minimessage/
+
+# PlaceholderAPI is available in every message on Spigot ONLY. PlaceholderAPI will not work on BungeeCord.
+
 staffchat:
-  # PlaceholderAPI is supported only on Spigot
-  # Placeholders for both spigot and bungeecord:
-  # %player_name% - The player's name, %message% - The message, %server% - The server the player is on (ONLY BUNGEE)
-  # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
-  format: "&8[&dS&8] &7%player_name%&8: &f%message%"
+  # Extra Placeholders available:
+  #   %message% - The message sent by the player
+  format: "<dark_gray>[<light_purple>S</light_purple>]</dark_gray> <gray>%player_name%</gray>: <white>%message%"
 
   # Putting whatever is below before your message will send it to staffchat
   # e.g # hello there
@@ -28,142 +55,346 @@ staffchat:
   # ONLY BUNGEE
   console-server-replacement: "Global"
 
-  # Whether or not to send staffchat messages to console
+  # Whether to send staffchat messages to console
   log-to-console: true
 
   # If a staff member puts color codes in their message, it will remove them if the below is true.
   strip-color-codes: false
 
-  # Changes the display name of servers on Bungeecord. Color codes supported
-  server-replacement: # Format - servername: "Displayname"
-    hub: "Hub" # Make sure that the first value is the one equal to in the bungeecord config.yml
+  # BungeeCord Only
+  # Changes the display name of servers on BungeeCord.
+  # MiniMessage formatting is supported.
+  # Placeholders are not available.
+  server-replacement: # Format - servername: "displayname"
+    hub: "<blue>Hub</blue>" # Make sure that the first value is the one equal to in the BungeeCord config.yml
 
-  # The message that shows when someone has "betterstaffchat.messages.join" joins the network
-  # PlaceholderAPI is supported only on Spigot
-  # Placeholders for both spigot and bungeecord:
-  # %player_name% - The player's name, %server% - The server the player is on (ONLY BUNGEE)
-  # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
-  join: "&8[&dS&8] &7%player_name% &fjoined &7the network." # Set to "" to disable
+  # BungeeCord Only
+  # Servers where the StaffChat has no effect.
+  disabled-servers:
+    - "testserver123"
 
-  # The message that shows when someone has "betterstaffchat.messages.leave" leaves the network
-  # PlaceholderAPI is supported only on Spigot
-  # Placeholders for both spigot and bungeecord:
-  # %player_name% - The player's name, %server% - The server the player is on (ONLY BUNGEE)
-  # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
-  leave: "&8[&dS&8] &7%player_name% &fleft &7the network." # Set to "" to disable
+  events:
 
-  # The message that shows when someone has "betterstaffchat.messages.switch" switches between servers/worlds
-  # PlaceholderAPI is supported only on Spigot
-  # Note, if on bungee it will show the server, however on spigot it will show the world.
-  # %player_name% - The player's name, %from% - The server/world the player left, %to% - The server/world the player joined
-  # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
-  switch: "&8[&dS&8] &7%player_name% &fswitched &7from &f%from% &7to &f%to%" # Set to "" to disable
-
-  # The message that is shown when staff chat messages are toggled on with /mutestaffchat
-  # /mutestaffchat required permission betterstaffchat.mutestaffchat
-  mute-off: "&8[&dS&8] &7Your staff chat is now &aenabled&7."
-
-  # The message that is shown when staff chat messages are toggled off with /mutestaffchat
-  # /mutestaffchat required permission betterstaffchat.mutestaffchat
-  mute-on: "&8[&dS&8] &7Your staff chat is now &cdisabled&7."
-
-  # The message that is shown when all the player's messages go to the staffchat with /togglestaffchat
-  # /togglestaffchat required permission betterstaffchat.togglestaffchat
-  toggle-off: "&8[&dS&8] &7All your messages will &cno longer&7 go to staffchat."
-
-  # The message that is shown when staff chat messages are toggled on with /mutestaffchat
-  # /mutestaffchat required permission betterstaffchat.mutestaffchat
-  toggle-on: "&8[&dS&8] &7All your messages will &anow&7 go to staffchat."
-
-discord:
-
-  # If you need help, we're here to assist you at https://austech.dev/to/support
-
-  # Don't enable if webhook is enabled below
-  bot:
-    enabled: false
-
-    # The token of the Discord bot. If you need help setting it up we're here to assist you at https://austech.dev/to/support
-    token: "N/A"
-
-    # What the bot is doing in its status, e.g Playing with staffchat
-    activity: "with staffchat"
-
-    # The different types of activities (Must be in caps)
-    # - PLAYING, WATCHING, LISTENING
-    activity-type: "PLAYING"
-
-    # The channels that staff messages are sent to
-    # Format - GuildID: ChannelID
-    channels:
-      - "N/A: N/A"
-
-
-  # Don't enable if bot is enabled above
-  webhook:
-    enabled: false
-
-    # The webhook URL. If you need help setting it up we're here to assist you at https://austech.dev/to/support
-    url: ""
-
-  discord-messages:
-
-    # The format in game, for when someone sends a message in Discord
-    # Available placeholders: %username%, %discriminator% - The 4 numbers in the username
-    # %nickname% - The nickname on Discord
-    name-format: "%username%#%discriminator%"
-
-    embed:
-      # Whether or not the message sent to Discord should be an embed
-      # true for yes, false for no.
+    join:
+      # Enable or disable the join message event.
       enabled: true
 
-      # The text that is at the bottom of the embed
-      # %player_name% - The player's name, %uuid% - The player's UUID, %server% - The server the player is on (ONLY BUNGEE)
-      embed-footer: "BetterStaffChat" # Setting this to "" will disable this and the icon.
+      # Whether a player sees their own join message.
+      see-own-join: true
 
-      # The little icon next to the footer
-      # %player_name% - The player's name, %uuid% - The player's UUID, %server% - The server the player is on (ONLY BUNGEE)
-      embed-footer-icon: "https://crafatar.com/avatars/%uuid%?overlay" # Set to "" to disable
+      # This message supports all the placeholders above.
+      message: "<dark_gray>[<light_purple>S</light_purple>]</dark_gray> <gray>%player_name% <white>joined</white> the network."
+    leave:
+      # Enable or disable the leave message event.
+      enabled: true
 
-      # The color of the embed, MUST be a hex code.
-      embed-color: "#FFD555"
+      # This message supports all the placeholders above.
+      message: "<dark_gray>[<light_purple>S</light_purple>]</dark_gray> <gray>%player_name% <white>left</white> the network."
 
-    # The format of the message sent to Discord
-    # %player_name% - The player_name's name, %message% - The message, %server% - The server the player is on (ONLY BUNGEE)
-    # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
-    staffchat-format: "**%player_name%**: %message%"
+    switch:
+      # Enable or disable the switch message event.
+      enabled: true
 
-    # The message that is sent to Discord when a player with the "betterstaffchat.messages.join" permission joins
-    # %player_name% - The player's name, %server% - The server the player is on (ONLY BUNGEE)
-    # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
-    staffchat-join: "%player_name% **joined** the network"
+      # Whether to enable this on Spigot and use worlds instead of servers.
+      use-worlds-on-spigot: false
 
-    # The message that is sent to Discord when a player with the "betterstaffchat.messages.leave" permission leaves
-    # %player_name% - The player's name, %server% - The server the player is on (ONLY BUNGEE)
-    # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
-    staffchat-leave: "%player_name% **left** the network"
+      # This message supports all the placeholders above.
+      message: "<dark_gray>[<light_purple>S</light_purple>]</dark_gray> <gray>%player_name% <white>switched</white> from <white>%from%</white> to <white>%to%</white>."
 
-    # The message that is sent to Discord when a player with the "betterstaffchat.messages.switch" permission servers/worlds
-    # %player_name% - The player's name, %from% - The server/world the player left, %to% - The server/world the player joined
-    # %luckperms_prefix% - The prefix of the player from LuckPerms, %luckperms_suffix% - The suffix of the player from LuckPerms
-    staffchat-switch: "%player_name% **switched** from **%from%** to **%to%**"
+  # BetterStaffChat has a feature called /staffchatmute. This mutes/ignores your own staffchat, and does not
+  # mute the staffchat of other players. This can also be called staffchatignore.
+  mute:
 
-commands: # Options for commands | Aliases can not be the same, nor can they be any base command.
-  staffchat: # /staffchat command
-    command: staffchat
-    aliases: [sc, schat]
-  mutestaffchat: # /mutestaffchat command
-    command: mutestaffchat
-    aliases: [mutesc, scmute, scm, msc, ignorestaffchat]
-  togglestaffchat: # /togglestaffchat command
-    aliases: [tsc, sct, sctoggle, staffchattoggle, togglesc]
+    # Whether to enable the self-mute / ignore feature.
+    enabled: true
 
-# Disable this to stop the plugin checking for updates on startup
+    # The message to send the player when they enable their mute.
+    # This message supports all the placeholders above.
+    on: "<dark_gray>[<light_purple>S</light_purple>]</dark_gray> <gray>Your staff chat is now <red>disabled<gray>."
+
+    # The message to send the player when they disable their mute.
+    # This message supports all the placeholders above.
+    off: "<dark_gray>[<light_purple>S</light_purple>]</dark_gray> <gray>Your staff chat is now <green>enabled<gray>."
+
+    # The two above messages are "reversed", as their staffchat is disabled when they enable mute.
+
+  # BetterStaffChat also has a feature called /togglestaffchat. This makes ALL of the
+  # player's messages go to staffchat, and not to a public chat.
+  toggle:
+    # Whether to enable the toggle feature.
+    enabled: true
+
+    # The message to send the player when they enable their toggle.
+    # This message supports all the placeholders above.
+    on: "<dark_gray>[<light_purple>S</light_purple>]</dark_gray> <gray>All your messages will <green>now</green> go to staffchat."
+
+    # The message to send the player when they enable their toggle.
+    # This message supports all the placeholders above.
+    off: "<dark_gray>[<light_purple>S</light_purple>]</dark_gray> <gray>All your messages will <red>no longer</red> go to staffchat."
+
+discord:
+  # BetterStaffChat has two types of Discord integration.
+  # The first type is using a Discord Bot. This allows two way chat between
+  # the in-game staffchat and a staffchat channel on Discord.
+  # This is the recommended type.
+  #
+  # The second type is using a Discord Webhook. This allows the staffchat to be
+  # sent to a Discord channel, but the messages in Discord will not get sent to
+  # the game.
+  #
+  # Bot: In-Game StaffChat -> Discord AND Discord -> In-Game StaffChat
+  # Webhook: In-Game StaffChat -> Discord
+
+  enabled: false
+
+  # The type of integration to use.
+  # This can be either "bot" or "webhook".
+  type: "bot"
+
+  bot:
+    # If you are using a Discord Bot, you need to set the token here.
+    # You can create a Discord bot at:
+    # https://discord.com/developers/applications
+    #
+    # You can follow this guide:
+    # https://discordpy.readthedocs.io/en/stable/discord.html
+    token: ""
+
+    # The status of the bot.
+    # This can be either "online", "idle", "dnd", or "invisible".
+    status: "online"
+
+    activity:
+      # Whether to enable the bot's activity.
+      # For example, this is the "Playing with staffchat" under the bot.
+      enabled: true
+
+      # The type of activity.
+      # This can be either "playing", "streaming", "listening", or "watching".
+      type: "playing"
+
+      # The name of the activity.
+      status: "with staffchat"
+
+    # The channels and guilds to send the staffchat to.
+    # You can find the ID of a guild and channel with this guide:
+    # https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-
+    #
+    # The format for this section can be found below.
+    # If you wish to disable a certain event, set it to []
+    # For example:
+    # events:
+    #   leave: []
+    #
+    # This would disable leave messages being sent to Discord, however, they will still function in-game.
+
+    channels:
+      GuildID:
+        events:
+          staffchat: [ ChannelID ]
+          join: [ ChannelID ]
+          leave: [ ChannelID ]
+          switch: [ ChannelID ]
+
+  webhook:
+    # https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+    webhook-url: ""
+
+  # Whether the bot / webhook can mention certain roles & users.
+  # It is recommended to keep this on none, even if you don't use any mentions.
+  # This is to prevent people from mentioning the bot or webhook in-game which can lead to some spammy situations.
+  #
+  # This can be either "none (no-one can be mentioned), "users" (all users can be mentioned), "roles" (all roles nad users can be mentioned)
+  #   or "all" (all roles, users and @everyone/here can be mentioned).
+  allowed-mentions: "none"
+
+  messages:
+    # The format in game, for when someone sends a message in Discord
+    # The placeholders available are:
+    #   %username%       - The username of the person who sent the message
+    #   %discriminator%  - The discriminator of the person who sent the message (4 digits in their tag)
+    #   %tag%            - The tag of the person who sent the message. This is the username and discriminator combined.
+    #   %nickname%       - The nickname of the person who sent the message, or, if they don't have one, their username.
+    #   %message%        - The message that was sent.
+
+    name-format: "%username%#%discriminator%"
+
+    staffchat:
+      # This dictates how messages are sent.
+      # This can be either "embed" or "text".
+      mode: "embed"
+
+      # You can view the parts to an embed here:
+      #   https://anidiots.guide/.gitbook/assets/first-bot-embed-example.png
+
+      # Please see the relative event sections for more information about the placeholders.
+
+      embed:
+        author:
+          name: "%player_name%"
+          url: "" # This is optional.
+          icon-url: "https://minotar.net/helm/%player_name%/128.png"
+        body:
+          title: ""
+          title-url: ""
+          description: |
+            %message%
+          color: "#FFD555"
+        # fields: # This is commented out by default. If you wish to enable fields, uncomment this.
+        #   1:
+        #     name: ""
+        #     value: ""
+        #     inline: false
+        images:
+          images: [ "" ]
+          thumbnail: ""
+
+        footer:
+          timestamp: false # If this is true, the current time will be used.
+          text: "BetterStaffChat"
+          icon-url: ""
+
+      text: "**%player_name%**: %message%"
+    join:
+      # This dictates how messages are sent.
+      # This can be either "embed" or "text".
+      mode: "embed"
+
+      # You can view the parts to an embed here:
+      #   https://anidiots.guide/.gitbook/assets/first-bot-embed-example.png
+
+      # Please see the relative event sections for more information about the placeholders.
+
+      embed:
+        author:
+          name: "%player_name%"
+          url: "" # This is optional.
+          icon-url: "https://minotar.net/helm/%player_name%/128.png"
+        body:
+          title: ""
+          title-url: ""
+          description: |
+            %player_name% **joined** the network.
+          color: "#FFD555"
+        # fields: # This is commented out by default. If you wish to enable fields, uncomment this.
+        #   1:
+        #     name: ""
+        #     value: ""
+        #     inline: false
+        images:
+          images: [ "" ]
+          thumbnail: ""
+
+        footer:
+          timestamp: false # If this is true, the current time will be used.
+          text: "BetterStaffChat"
+          icon-url: ""
+
+      text: "%player_name% **joined** the network."
+    leave:
+      # This dictates how messages are sent.
+      # This can be either "embed" or "text".
+      mode: "embed"
+
+      # You can view the parts to an embed here:
+      #   https://anidiots.guide/.gitbook/assets/first-bot-embed-example.png
+
+      # Please see the relative event sections for more information about the placeholders.
+
+      embed:
+        author:
+          name: "%player_name%"
+          url: "" # This is optional.
+          icon-url: "https://minotar.net/helm/%player_name%/128.png"
+        body:
+          title: ""
+          title-url: ""
+          description: |
+            %player_name% **left** the network.
+          color: "#FFD555"
+        # fields: # This is commented out by default. If you wish to enable fields, uncomment this.
+        #   1:
+        #     name: ""
+        #     value: ""
+        #     inline: false
+        images:
+          images: [ "" ]
+          thumbnail: ""
+
+        footer:
+          timestamp: false # If this is true, the current time will be used.
+          text: "BetterStaffChat"
+          icon-url: ""
+
+      text: "%player_name% **left** the network."
+    switch:
+      # This dictates how messages are sent.
+      # This can be either "embed" or "text".
+      mode: "embed"
+
+      # You can view the parts to an embed here:
+      #   https://anidiots.guide/.gitbook/assets/first-bot-embed-example.png
+
+      # Please see the relative event sections for more information about the placeholders.
+
+      embed:
+        author:
+          name: "%player_name%"
+          url: "" # This is optional.
+          icon-url: "https://minotar.net/helm/%player_name%/128.png"
+        body:
+          title: ""
+          title-url: ""
+          description: |
+            %player_name% **switched** from **%from%** to **%to%**.
+          color: "#FFD555"
+        # fields: # This is commented out by default. If you wish to enable fields, uncomment this.
+        #   1:
+        #     name: ""
+        #     value: ""
+        #     inline: false
+        images:
+          images: [ "" ]
+          thumbnail: ""
+
+        footer:
+          timestamp: false # If this is true, the current time will be used.
+          text: "BetterStaffChat"
+          icon-url: ""
+
+      text: "%player_name% **switched** from **%from%** to **%to%**."
+
+commands:
+  # This section allows you to change the commands and aliases used for the staffchat.
+
+  staffchat:
+    command: "staffchat" # The main command to be used.
+    aliases: [ sc, schat ] # The aliases for the command. Using the main command or duplicates won't affect anything.
+
+  mutestaffchat:
+    command: "mutestaffchat" # The main command to be used.
+    aliases: [ msc, isc, hidesc, staffchatmute, ignorestaffchat ] # The aliases for the command. Using the main command or duplicates won't affect anything.
+
+  togglestaffchat:
+    command: "staffchat" # The main command to be used.
+    aliases: [ tsc, sct, sctoggle, staffchattoggle, togglesc ] # The aliases for the command. Using the main command or duplicates won't affect anything.
+
+hooks:
+  # Enables hooking into LuckPerms. See placeholders above.
+  luckperms: true
+
+  # Enabled hooking into PlaceHolderAPI. This will only have an effect on Spigot.
+  placeholderapi: true
+
+# Disable this to stop the plugin checking for updates on startup.
 check-for-updates: true
 
+# Disable this to stop the plugin sending a message to those who have the `betterstaffchat.updatenotify` permission on join.
+send-updates-to-admins: true
+
 # Don't touch unless you know what you are doing
+# Most of the time nothing should debug.
 debug: false
 
 # no touchy me please [DO NOT TOUCH AS IT CAN BREAK YOUR CONFIG]
-config-version: 4
+config-version: 5
