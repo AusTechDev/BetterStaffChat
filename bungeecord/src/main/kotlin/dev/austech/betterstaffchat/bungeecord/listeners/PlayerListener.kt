@@ -26,7 +26,7 @@ class PlayerListener(private val plugin: Plugin): Listener {
         val player = event.sender as ProxiedPlayer
 
         if (player.hasPermission("betterstaffchat.messages.send")) {
-            val prefix = BSCBungee.instance.config.getString(Config.Paths.STAFFCHAT.PREFIX.toString()) ?: "";
+            val prefix = BSCBungee.instance.config.getString(Config.Paths.Staffchat.PREFIX.toString()) ?: "";
 
             if (event.message.startsWith(prefix) && event.message.length > prefix.length && prefix.isNotBlank() && !prefix.startsWith("/")) {
                 if (PlayerUtil.isDisabledServer(player.server.info)) {
@@ -47,7 +47,7 @@ class PlayerListener(private val plugin: Plugin): Listener {
                         )
                     )
                 )
-            } else if (BSCBungee.instance.dataWrapper.getToggledPlayers().contains(player.uniqueId) && BSCBungee.instance.config.getBoolean(Config.Paths.STAFFCHAT.TOGGLE_ENABLED.toString())) {
+            } else if (BSCBungee.instance.dataWrapper.getToggledPlayers().contains(player.uniqueId) && BSCBungee.instance.config.getBoolean(Config.Paths.Staffchat.TOGGLE_ENABLED.toString())) {
                 if (PlayerUtil.isDisabledServer(player.server.info)) {
                     BSCBungee.instance.audience.player(player).sendMessage(Component.text("You cannot use staffchat on this server.").color(NamedTextColor.RED))
                     return
@@ -72,13 +72,13 @@ class PlayerListener(private val plugin: Plugin): Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PostLoginEvent) {
-        if (!BSCBungee.instance.config.getBoolean(Config.Paths.STAFFCHAT.EVENTS_JOIN_ENABLED.toString())) return
+        if (!BSCBungee.instance.config.getBoolean(Config.Paths.Staffchat.EVENTS_JOIN_ENABLED.toString())) return
         if (event.player.hasPermission("betterstaffchat.messages.join")) {
             if (PlayerUtil.isDisabledServer(event.player.server.info)) {
                 return
             }
 
-            val aud: Audience = if (!BSCBungee.instance.config.getBoolean(Config.Paths.STAFFCHAT.EVENTS_JOIN_SEE_OWN.toString()))
+            val aud: Audience = if (!BSCBungee.instance.config.getBoolean(Config.Paths.Staffchat.EVENTS_JOIN_SEE_OWN.toString()))
                 PlayerUtil.getReceiveAudienceWithIgnored(event.player.uniqueId)
             else PlayerUtil.getReceiveAudience()
 
@@ -101,7 +101,7 @@ class PlayerListener(private val plugin: Plugin): Listener {
 
     @EventHandler
     fun onPlayerQuit(event: PlayerDisconnectEvent) {
-        if (!BSCBungee.instance.config.getBoolean(Config.Paths.STAFFCHAT.EVENTS_LEAVE_ENABLED.toString())) return
+        if (!BSCBungee.instance.config.getBoolean(Config.Paths.Staffchat.EVENTS_LEAVE_ENABLED.toString())) return
         if (event.player.hasPermission("betterstaffchat.messages.leave")) {
             if (PlayerUtil.isDisabledServer(event.player.server.info)) {
                 return
@@ -124,7 +124,7 @@ class PlayerListener(private val plugin: Plugin): Listener {
 
     @EventHandler
     fun onPlayerSwitch(event: ServerSwitchEvent) {
-        if (!BSCBungee.instance.config.getBoolean(Config.Paths.STAFFCHAT.EVENTS_SWITCH_ENABLED.toString())) return
+        if (!BSCBungee.instance.config.getBoolean(Config.Paths.Staffchat.EVENTS_SWITCH_ENABLED.toString())) return
         if (event.player.hasPermission("betterstaffchat.messages.switch")) {
             requireNotNull(event.from) { "From server is null! This means you are using an old version of FlameCord or Aegis." }
 

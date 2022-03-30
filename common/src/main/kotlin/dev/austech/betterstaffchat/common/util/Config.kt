@@ -4,7 +4,6 @@ import de.leonhard.storage.LightningBuilder
 import de.leonhard.storage.Yaml
 import dev.austech.betterstaffchat.common.BSCPlugin
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import java.io.File
 import java.nio.file.Files
 
@@ -21,19 +20,17 @@ class Config(private val plugin: BSCPlugin) {
                 }
         }
 
-
-
         return LightningBuilder.fromFile(configFile)
             .reloadCallback {
                 plugin.consoleAudience.sendMessage(
                     Component.text("[BetterStaffChat] Reload requested or config.yml change. Reloading.")
                 )
             }
-            .createConfig();
+            .createConfig()
     }
 
     class Paths {
-        enum class STAFFCHAT(private val path: String) {
+        enum class Staffchat(private val path: String) {
             FORMAT("staffchat.format"),
             PREFIX("staffchat.prefix"),
             CONSOLE_NAME("staffchat.console-replacement"),
@@ -65,7 +62,7 @@ class Config(private val plugin: BSCPlugin) {
             }
         }
 
-        enum class COMMAND(private val path: String) {
+        enum class Command(private val path: String) {
             STAFFCHAT_COMMAND("commands.staffchat.command"),
             STAFFCHAT_ALIASES("commands.staffchat.aliases"),
             MUTE_COMMAND("commands.mutestaffchat.command"),
@@ -78,12 +75,40 @@ class Config(private val plugin: BSCPlugin) {
             }
         }
 
-        enum class HOOKS(private val path: String) {
+        enum class Hooks(private val path: String) {
             LUCKPERMS("hooks.luckperms"),
             PLACEHOLDERAPI("hooks.placeholderapi");
 
             override fun toString(): String {
                 return path
+            }
+        }
+
+        enum class Discord(private val path: String) {
+            ENABLED("discord.enabled"),
+            TYPE("discord.type"),
+
+            BOT_TOKEN("discord.bot.token"),
+            BOT_STATUS("discord.bot.status"),
+            BOT_ACTIVITY("discord.bot.activity.enabled"),
+            BOT_ACTIVITY_TYPE("discord.bot.activity.type"),
+            BOT_ACTIVITY_STATUS("discord.bot.activity.status"),
+            BOT_CHANNELS("discord.bot.channels"),
+
+            WEBHOOK_URL("discord.webhook.url"),
+
+            ALLOWED_MENTIONS("discord.allowed-mentions"),
+
+            NAME_FORMAT("discord.messages.name-format");
+
+            override fun toString(): String {
+                return path
+            }
+
+            class Message(event: String) {
+                val mode = "discord.messages.$event.mode"
+                val embed = "discord.messages.$event.embed"
+                val text = "discord.messages.$event.text"
             }
         }
     }

@@ -11,7 +11,7 @@ class StaffChatMuteCommand(name: String, description: String, usage: String, ali
             return true
         }
 
-        if (!plugin.config.getBoolean(Config.Paths.STAFFCHAT.MUTE_ENABLED.toString())) {
+        if (!plugin.config.getBoolean(Config.Paths.Staffchat.MUTE_ENABLED.toString())) {
             errorTell("Staffchat mute is not enabled.")
             return true
         }
@@ -51,10 +51,10 @@ class StaffChatMuteCommand(name: String, description: String, usage: String, ali
 
         if (mute) {
             plugin.dataWrapper.addMutedPlayer(sender.uniqueId)
-            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT.MUTE_MESSAGE_ON.toString()))
+            legacyTell(plugin.config.getString(Config.Paths.Staffchat.MUTE_MESSAGE_ON.toString()))
         } else {
             plugin.dataWrapper.removeMutedPlayer(sender.uniqueId)
-            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT.MUTE_MESSAGE_OFF.toString()))
+            legacyTell(plugin.config.getString(Config.Paths.Staffchat.MUTE_MESSAGE_OFF.toString()))
         }
 
         return true

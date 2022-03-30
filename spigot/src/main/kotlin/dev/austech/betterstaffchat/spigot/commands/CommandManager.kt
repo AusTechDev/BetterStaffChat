@@ -12,22 +12,22 @@ import org.bukkit.command.Command
 class CommandManager(private val plugin: BSCSpigot) {
     private val commands: List<Command> = listOf(
         StaffChatCommand(
-            plugin.config.getString(Config.Paths.COMMAND.STAFFCHAT_COMMAND.toString())?: "staffchat",
+            plugin.config.getString(Config.Paths.Command.STAFFCHAT_COMMAND.toString())?: "staffchat",
             "This command lets you send a message to the staffchat.",
             "<messages...>",
-            plugin.config.getStringList(Config.Paths.COMMAND.STAFFCHAT_ALIASES.toString())
+            plugin.config.getStringList(Config.Paths.Command.STAFFCHAT_ALIASES.toString())
         ),
         StaffChatMuteCommand(
-            plugin.config.getString(Config.Paths.COMMAND.MUTE_COMMAND.toString())?: "mutestaffchat",
+            plugin.config.getString(Config.Paths.Command.MUTE_COMMAND.toString())?: "mutestaffchat",
             "This command lets you ignore / disable your staffchat.",
             "[on/off]",
-            plugin.config.getStringList(Config.Paths.COMMAND.MUTE_ALIASES.toString())
+            plugin.config.getStringList(Config.Paths.Command.MUTE_ALIASES.toString())
         ),
         StaffChatToggleCommand(
-            plugin.config.getString(Config.Paths.COMMAND.TOGGLE_COMMAND.toString())?: "togglestaffchat",
+            plugin.config.getString(Config.Paths.Command.TOGGLE_COMMAND.toString())?: "togglestaffchat",
             "This command lets you ignore / disable your staffchat.",
             "[on/off]",
-            plugin.config.getStringList(Config.Paths.COMMAND.TOGGLE_ALIASES.toString())
+            plugin.config.getStringList(Config.Paths.Command.TOGGLE_ALIASES.toString())
         ),
         BetterStaffChatCommand()
     )

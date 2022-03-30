@@ -2,6 +2,7 @@ package dev.austech.betterstaffchat.bungeecord.util
 
 import dev.austech.betterstaffchat.bungeecord.BSCBungee
 import dev.austech.betterstaffchat.common.util.Config
+import dev.austech.betterstaffchat.common.util.IPlayerUtil
 import net.kyori.adventure.audience.Audience
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.ProxyServer
@@ -9,10 +10,10 @@ import net.md_5.bungee.api.config.ServerInfo
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import java.util.*
 
-object PlayerUtil {
+object PlayerUtil: IPlayerUtil {
     fun getSenderName(sender: CommandSender): String {
         return if (sender is ProxiedPlayer) sender.name
-        else BSCBungee.instance.config.getString(Config.Paths.STAFFCHAT.CONSOLE_NAME.toString())
+        else BSCBungee.instance.config.getString(Config.Paths.Staffchat.CONSOLE_NAME.toString())
     }
 
     private fun getMutedPlayers(): List<UUID> {
@@ -28,7 +29,7 @@ object PlayerUtil {
     }
 
     fun getReceiveAudienceWithIgnored(ignored: UUID): Audience {
-        return if (BSCBungee.instance.config.getBoolean(Config.Paths.STAFFCHAT.CONSOLE_LOG.toString())) getAudienceMixedWithIgnored(
+        return if (BSCBungee.instance.config.getBoolean(Config.Paths.Staffchat.CONSOLE_LOG.toString())) getAudienceMixedWithIgnored(
             "betterstaffchat.messages.read",
             ignored
         )
@@ -43,25 +44,25 @@ object PlayerUtil {
         it.hasPermission(permission) && if (it is ProxiedPlayer) !getMutedPlayers().contains(it.uniqueId) else true
     }
 
-    fun getReceiveAudience(): Audience {
-        return if (BSCBungee.instance.config.getBoolean(Config.Paths.STAFFCHAT.CONSOLE_LOG.toString())) getMixedAudience(
+    override fun getReceiveAudience(): Audience {
+        return if (BSCBungee.instance.config.getBoolean(Config.Paths.Staffchat.CONSOLE_LOG.toString())) getMixedAudience(
             "betterstaffchat.messages.read"
         )
         else getPermissionAudience("betterstaffchat.messages.read")
     }
 
     fun getServer(sender: CommandSender): String {
-        return if (sender !is ProxyServer) BSCBungee.instance.config.getString(Config.Paths.STAFFCHAT.CONSOLE_SERVER.toString())
+        return if (sender !is ProxyServer) BSCBungee.instance.config.getString(Config.Paths.Staffchat.CONSOLE_SERVER.toString())
         else getServerReplacement((sender as ProxiedPlayer).server.info)
     }
 
     fun getRawServer(sender: CommandSender): String {
-        return if (sender !is ProxyServer) BSCBungee.instance.config.getString(Config.Paths.STAFFCHAT.CONSOLE_SERVER.toString())
+        return if (sender !is ProxyServer) BSCBungee.instance.config.getString(Config.Paths.Staffchat.CONSOLE_SERVER.toString())
         else (sender as ProxiedPlayer).server.info.name
     }
 
     fun getServerReplacement(info: ServerInfo): String {
-        BSCBungee.instance.config.getString(Config.Paths.STAFFCHAT.SERVER_REPLACEMENTS.toString() + "." + info.name)?.let {
+        BSCBungee.instance.config.getString(Config.Paths.Staffchat.SERVER_REPLACEMENTS.toString() + "." + info.name)?.let {
             return it
         }
 
@@ -69,6 +70,6 @@ object PlayerUtil {
     }
 
     fun isDisabledServer(info: ServerInfo): Boolean {
-        return BSCBungee.instance.config.getStringList(Config.Paths.STAFFCHAT.DISABLED_SERVERS.toString())?.contains(info.name) ?: false
+        return BSCBungee.instance.config.getStringList(Config.Paths.Staffchat.DISABLED_SERVERS.toString())?.contains(info.name) ?: false
     }
 }

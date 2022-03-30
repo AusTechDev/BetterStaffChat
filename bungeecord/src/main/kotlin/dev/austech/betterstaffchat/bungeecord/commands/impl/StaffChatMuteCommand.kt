@@ -8,7 +8,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer
 
 class StaffChatMuteCommand(name: String, aliases: List<String>): BSCBungeeCommand(name, "betterstaffchat.mutestaffchat", aliases) {
     override fun run(sender: CommandSender, args: Array<out String>) {
-        if (!plugin.config.getBoolean(Config.Paths.STAFFCHAT.MUTE_ENABLED.toString())) {
+        if (!plugin.config.getBoolean(Config.Paths.Staffchat.MUTE_ENABLED.toString())) {
             errorTell("Staffchat mute is not enabled.")
             return
         }
@@ -53,10 +53,10 @@ class StaffChatMuteCommand(name: String, aliases: List<String>): BSCBungeeComman
 
         if (mute) {
             plugin.dataWrapper.addMutedPlayer(sender.uniqueId)
-            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT.MUTE_MESSAGE_ON.toString()))
+            legacyTell(plugin.config.getString(Config.Paths.Staffchat.MUTE_MESSAGE_ON.toString()))
         } else {
             plugin.dataWrapper.removeMutedPlayer(sender.uniqueId)
-            legacyTell(plugin.config.getString(Config.Paths.STAFFCHAT.MUTE_MESSAGE_OFF.toString()))
+            legacyTell(plugin.config.getString(Config.Paths.Staffchat.MUTE_MESSAGE_OFF.toString()))
         }
 
         return

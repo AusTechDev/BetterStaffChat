@@ -5,10 +5,13 @@ import de.leonhard.storage.Yaml
 import dev.austech.betterstaffchat.bungeecord.commands.CommandManager
 import dev.austech.betterstaffchat.bungeecord.libby.BungeeLibraryManager
 import dev.austech.betterstaffchat.bungeecord.listeners.PlayerListener
+import dev.austech.betterstaffchat.bungeecord.util.PlayerUtil
 import dev.austech.betterstaffchat.common.BSCPlugin
+import dev.austech.betterstaffchat.common.discord.DiscordManager
 import dev.austech.betterstaffchat.common.libraries.BSCLibraries
 import dev.austech.betterstaffchat.common.util.Config
 import dev.austech.betterstaffchat.common.util.Data
+import dev.austech.betterstaffchat.common.util.IPlayerUtil
 import dev.austech.betterstaffchat.common.util.StaffChatUtil
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences
@@ -25,7 +28,10 @@ class BSCBungee(private val plugin: Plugin): BSCPlugin {
     override val pluginDataFile: File = plugin.dataFolder
     override lateinit var config: Yaml
     override lateinit var consoleAudience: Audience
-    lateinit var staffChatUtil: StaffChatUtil
+    override lateinit var staffChatUtil: StaffChatUtil
+    override val playerUtil: IPlayerUtil = PlayerUtil
+    override val discordManager: DiscordManager
+        get() = TODO("Not yet implemented")
     lateinit var audience: BungeeAudiences
     private lateinit var data: Json
     lateinit var dataWrapper: Data.Wrapper;

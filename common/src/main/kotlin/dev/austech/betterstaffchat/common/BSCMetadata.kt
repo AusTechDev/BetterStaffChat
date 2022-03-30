@@ -4,11 +4,15 @@ import lombok.AllArgsConstructor
 import java.util.UUID
 
 class BSCMetadata {
-    val playerMeta: Player
+    var playerMeta: Player? = null
     var luckpermsMeta: LuckPerms? = null
     var proxyMeta: Proxy? = null
     var spigotMeta: Spigot? = null
+    var discordMeta: Discord? = null
 
+    constructor(discordMeta: Discord) {
+        this.discordMeta = discordMeta
+    }
 
     constructor(playerMeta: Player) {
         this.playerMeta = playerMeta
@@ -64,5 +68,10 @@ class BSCMetadata {
     @AllArgsConstructor
     class Spigot(
         val world: String?
+    )
+
+    @AllArgsConstructor
+    class Discord(
+        val displayName: String?
     )
 }

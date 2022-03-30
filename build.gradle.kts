@@ -52,6 +52,12 @@ subprojects {
         compileOnly("com.github.simplix-softworks:SimplixStorage:3.2.3")
         compileOnly("net.kyori:adventure-api:4.10.1")
         compileOnly("net.kyori:adventure-text-minimessage:4.10.1")
+        implementation("com.squareup.okio:okio:3.0.0") {
+            exclude("org.jetbrains.kotlin")
+        }
+        compileOnly("net.dv8tion:JDA:5.0.0-alpha.9") {
+            exclude("opus-java")
+        }
     }
 
     sourceSets {
@@ -79,6 +85,8 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
     relocate("net.kyori.adventure", "dev.austech.betterstaffchat.depend.adventure")
     relocate("de.leonhard.storage", "dev.austech.betterstaffchat.depend.storage")
     relocate("kotlin", "dev.austech.betterstaffchat.depend.kotlin")
+    relocate("net.dv8tion.jda", "dev.austech.betterstaffchat.depend.discord")
+    relocate("okio", "dev.austech.betterstaffchat.depend.okio")
 }
 
 task<Copy>("copyJars") {

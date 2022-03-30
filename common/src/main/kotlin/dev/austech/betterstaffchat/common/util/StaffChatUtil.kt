@@ -7,18 +7,31 @@ import java.util.*
 
 class StaffChatUtil(private val plugin: BSCPlugin) {
 
-    lateinit var replaceProvider: (UUID, String) -> String
+    private lateinit var replaceProvider: (UUID, String) -> String
+
+    private val discordEnabled: Boolean
+        get() = plugin.config.getBoolean(Config.Paths.Discord.ENABLED.toString())
 
     constructor(plugin: BSCPlugin, consumer: (u: UUID, s: String) -> String) : this(plugin) {
         replaceProvider = consumer
     }
 
-    private fun replacePlaceholders(s: String, meta: BSCMetadata): String {
-        var newString = s
-            .replace("%player_name%", meta.playerMeta.name)
+    fun replacePlaceholders(s: String, meta: BSCMetadata): String {
+        if (meta.discordMeta != null)
+            return s
+                .replace("%player_name%", meta.discordMeta!!.displayName ?: "")
+                .replace("%player_server%", "Discord")
+                .replace("%player_server_raw%", "Discord")
 
-        if (meta.playerMeta.uuid != null) {
-            newString = newString.replace("%player_uuid%", meta.playerMeta.uuid.toString())
+        if (meta.playerMeta == null) return s
+
+        val playerMeta = meta.playerMeta!!
+
+        var newString = s
+            .replace("%player_name%", playerMeta.name)
+
+        if (playerMeta.uuid != null) {
+            newString = newString.replace("%player_uuid%", playerMeta.uuid.toString())
         }
 
         if (meta.proxyMeta != null) {
@@ -55,16 +68,16 @@ class StaffChatUtil(private val plugin: BSCPlugin) {
             }
         }
 
-        if (meta.playerMeta.uuid != null) {
-            replaceProvider.invoke(meta.playerMeta.uuid, newString)
+        if (playerMeta.uuid != null) {
+            replaceProvider.invoke(playerMeta.uuid, newString)
         }
 
         return newString;
     }
 
     fun sendMessage(audience: Audience, message: String, meta: BSCMetadata) {
-        var configMessage: String = plugin.config.getString(Config.Paths.STAFFCHAT.FORMAT.toString()) ?: return;
-        val removeColorCodes = plugin.config.getBoolean(Config.Paths.STAFFCHAT.STRIP_COLOR_CODES.toString());
+        var configMessage: String = plugin.config.getString(Config.Paths.Staffchat.FORMAT.toString()) ?: return;
+        val removeColorCodes = plugin.config.getBoolean(Config.Paths.Staffchat.STRIP_COLOR_CODES.toString());
 
         configMessage = replacePlaceholders(configMessage, meta)
             .replace("%message%",
@@ -74,29 +87,53 @@ class StaffChatUtil(private val plugin: BSCPlugin) {
             )
 
         audience.sendMessage(TextUtil.parseText(configMessage))
+
+        if (discordEnabled && meta.discordMeta == null) {
+            plugin.discordManager.getMessageProvider("staffchat")?.handleMessage(plugin, "staffchat", meta) {
+                it.replace("%message%", message)
+            }
+        }
     }
 
     fun sendJoinMessage(audience: Audience, meta: BSCMetadata) {
-        var configMessage: String = plugin.config.getString(Config.Paths.STAFFCHAT.EVENTS_JOIN_MESSAGE.toString()) ?: return;
+        var configMessage: String = plugin.config.getString(Config.Paths.Staffchat.EVENTS_JOIN_MESSAGE.toString()) ?: return;
         configMessage = replacePlaceholders(configMessage, meta)
 
         audience.sendMessage(TextUtil.parseText(configMessage))
+
+        if (discordEnabled) {
+            plugin.discordManager.getMessageProvider("staffchat")?.handleMessage(plugin, "staffchat", meta) {
+                    it
+            }
+        }
     }
 
     fun sendLeaveMessage(audience: Audience, meta: BSCMetadata) {
-        var configMessage: String = plugin.config.getString(Config.Paths.STAFFCHAT.EVENTS_LEAVE_MESSAGE.toString()) ?: return;
+        var configMessage: String = plugin.config.getString(Config.Paths.Staffchat.EVENTS_LEAVE_MESSAGE.toString()) ?: return;
         configMessage = replacePlaceholders(configMessage, meta)
 
         audience.sendMessage(TextUtil.parseText(configMessage))
+
+        if (discordEnabled) {
+            plugin.discordManager.getMessageProvider("staffchat")?.handleMessage(plugin, "staffchat", meta) {
+                it
+            }
+        }
     }
 
     fun sendSwitchMessage(audience: Audience, from: String, to: String, meta: BSCMetadata) {
-        var configMessage: String = plugin.config.getString(Config.Paths.STAFFCHAT.EVENTS_SWITCH_MESSAGE.toString()) ?: return;
+        var configMessage: String = plugin.config.getString(Config.Paths.Staffchat.EVENTS_SWITCH_MESSAGE.toString()) ?: return;
         configMessage = replacePlaceholders(configMessage, meta)
         configMessage = configMessage
             .replace("%from%", from)
             .replace("%to%", to)
 
         audience.sendMessage(TextUtil.parseText(configMessage))
+
+        if (discordEnabled) {
+            plugin.discordManager.getMessageProvider("staffchat")?.handleMessage(plugin, "staffchat", meta) {
+                it.replace("%from%", from).replace("%to%", to)
+            }
+        }
     }
 }

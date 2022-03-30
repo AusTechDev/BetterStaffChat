@@ -158,6 +158,10 @@ discord:
     #
     # You can follow this guide:
     # https://discordpy.readthedocs.io/en/stable/discord.html
+
+    # !!! [IMPORTANT] Please make sure the "Server Members Intent" and "Message Content Intent" are enabled.
+    # If you do not enable it, Discord -> In-Game StaffChat will not work.
+
     token: ""
 
     # The status of the bot.
@@ -246,7 +250,7 @@ discord:
         #     value: ""
         #     inline: false
         images:
-          images: [ "" ]
+          image: ""
           thumbnail: ""
 
         footer:
@@ -282,7 +286,7 @@ discord:
         #     value: ""
         #     inline: false
         images:
-          images: [ "" ]
+          image: ""
           thumbnail: ""
 
         footer:
@@ -318,7 +322,7 @@ discord:
         #     value: ""
         #     inline: false
         images:
-          images: [ "" ]
+          image: ""
           thumbnail: ""
 
         footer:
@@ -354,7 +358,7 @@ discord:
         #     value: ""
         #     inline: false
         images:
-          images: [ "" ]
+          image: ""
           thumbnail: ""
 
         footer:
