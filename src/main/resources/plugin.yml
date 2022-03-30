@@ -1,0 +1,6 @@
+name: BetterStaffChat
+main: dev.austech.betterstaffchat.spigot.BSCSpigotBootstrap
+version: ${version}
+api-version: 1.13
+
+softdepend: [ PlaceholderAPI ]
