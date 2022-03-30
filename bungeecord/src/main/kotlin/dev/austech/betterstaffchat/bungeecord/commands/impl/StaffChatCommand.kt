@@ -32,7 +32,7 @@ class StaffChatCommand(name: String, aliases: List<String>) :
             PlayerUtil.getReceiveAudience(), args.joinToString(separator = " "),
             BSCMetadata(
                 BSCMetadata.Player(
-                    (if (sender is ProxiedPlayer) sender.uniqueId else null),
+                    if (sender is ProxiedPlayer) sender.uniqueId else null,
                     PlayerUtil.getSenderName(sender)
                 ),
                 BSCMetadata.Proxy(

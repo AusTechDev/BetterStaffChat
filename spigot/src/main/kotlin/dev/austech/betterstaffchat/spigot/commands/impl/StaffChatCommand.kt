@@ -25,7 +25,7 @@ class StaffChatCommand(name: String, description: String, usage: String, aliases
         plugin.staffChatUtil.sendMessage(PlayerUtil.getReceiveAudience(), args.joinToString(separator = " "),
             BSCMetadata(
                 BSCMetadata.Player(
-                    (if (sender is Player) sender.uniqueId else null),
+                    if (sender is Player) sender.uniqueId else null,
                     PlayerUtil.getSenderName(sender)
                 ),
                 BSCMetadata.Spigot(
